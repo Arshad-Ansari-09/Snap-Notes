@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <title>Document</title>
+</head>
+<body class="bg-stone-300">
+
+    <div>
+      <form action="" method="post">
+        <div class="relative py-3 sm:max-w-xs sm:mx-auto">
+          <div class="min-h-96 px-8 py-6 mt-4 text-left bg-white dark:bg-gray-800 rounded-xl shadow-lg">
+            <div class="flex flex-col justify-center items-center h-full select-none">
+              <div class="flex flex-col items-center justify-center gap-2 mb-4">
+                <p class="m-0 text-[16px] font-semibold dark:text-white">
+                  Create Your your Account 😊😊
+                </p>
+              </div>
+              <div class="w-full flex flex-col gap-2">
+                <label class="font-semibold text-xs text-gray-400">
+                  Username
+                </label>
+                <input
+                  type="text"
+                  name="username"
+                  placeholder="Username"
+                  class="border rounded-lg px-3 py-2 mb-5 text-sm w-full outline-none dark:border-white dark:bg-stone-100"
+                />
+              </div>
+              <div class="w-full flex flex-col gap-2">
+                <label class="font-semibold text-xs text-gray-400">Email</label>
+                <input
+                  type="email"
+                  name="email"
+                  placeholder="Email"
+                  class="border rounded-lg px-3 py-2 mb-5 text-sm w-full outline-none dark:border-white dark:bg-stone-100"
+                />
+              </div>
+            </div>
+            <div class="w-full flex flex-col gap-2">
+              <label class="font-semibold text-xs text-gray-400">
+                Password
+              </label>
+              <input
+                placeholder="••••••••"
+                class="border rounded-lg px-3 py-2 mb-5 text-sm w-full outline-none dark:border-white dark:bg-stone-100"
+                type="password"
+                name="password"
+              />
+            </div>
+            <div>
+              <button class="py-1 px-8 bg-blue-500 hover:bg-blue-800 focus:ring-offset-blue-200 text-white w-full transition ease-in duration-200 text-center text-base font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 rounded-lg cursor-pointer select-none">
+                Signup
+              </button>
+              <p class="mt-4 text-white">
+                Already have an account!
+                <a href="/login" class="text-blue-400 underline">
+                  Login
+                </a>
+              </p>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+    
+</body>
+</html>

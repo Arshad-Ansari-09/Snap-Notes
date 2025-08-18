@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <title>Document</title>
+  </head>
+  <body class="bg-stone-200 overflow-hidden">
+    <%- include("./partials/navBar") %>
+
+    <section class="bg-blueGray-50">
+      <div class="w-full lg:w-4/12 px-4 mx-auto">
+        <div
+          class="relative flex flex-col min-w-0 break-words bg-stone-200 w-full shadow-xl/20 rounded-lg mt-16"
+        >
+          <div class="mt-6 px-6">
+            <div class="flex flex-wrap justify-center">
+              <div class="px-4 flex justify-center">
+                <div class="relative h-18 w-34 ml-28">
+                  <a href="/change/profileImg">
+                    <label for="fileInput" title="Click to Upload">
+                      <svg class="absolute left-20 bottom-20 cursor-pointer" xmlns="http://www.w3.org/2000/svg" height="30px" viewBox="0 -960 960 960" width="30px" fill="#000000"><path d="M440-440ZM120-120q-33 0-56.5-23.5T40-200v-480q0-33 23.5-56.5T120-760h126l74-80h240v80H355l-73 80H120v480h640v-360h80v360q0 33-23.5 56.5T760-120H120Zm640-560v-80h-80v-80h80v-80h80v80h80v80h-80v80h-80ZM440-260q75 0 127.5-52.5T620-440q0-75-52.5-127.5T440-620q-75 0-127.5 52.5T260-440q0 75 52.5 127.5T440-260Zm0-80q-42 0-71-29t-29-71q0-42 29-71t71-29q42 0 71 29t29 71q0 42-29 71t-71 29Z"/></svg>
+                    </label>
+                  </a>
+                  <img
+                    alt="..."
+                    src="<%= loggedInUser.profileImg %>"
+                    class="rounded-full h-auto align-middle border-none absolute -m-16 -ml-20 lg:-ml-16"
+                  />
+                </div>
+              </div>
+              <div class="w-full px-4 text-center">
+                <div class="flex justify-center py-4 lg:pt-4 pt-8">
+                  <div class="mr-4 p-3 text-center">
+                    <span
+                      class="text-xl font-bold block uppercase tracking-wide text-blueGray-600"
+                    >
+                      <%= loggedInUser.friends.length %>
+                    </span>
+                    <span class="text-sm text-blueGray-400">Friends</span>
+                  </div>
+                  <div class="mr-4 p-3 text-center">
+                    <span
+                      class="text-xl font-bold block uppercase tracking-wide text-blueGray-600"
+                    >
+                      <%= loggedInUser.posts.length %>
+                    </span>
+                    <span class="text-sm text-blueGray-400">Posts</span>
+                  </div>
+                  <div class="lg:mr-4 p-3 text-center">
+                    <span
+                      class="text-xl font-bold block uppercase tracking-wide text-blueGray-600"
+                    >
+                      <%= followers.length %>
+                    </span>
+                    <span class="text-sm text-blueGray-400">Followers</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="w-full h-full flex justify-end">
+              <a href="" id="EditUserInfo"><svg class="hover:fill-blue-600" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#0000F5"><path d="M200-200h57l391-391-57-57-391 391v57Zm-80 80v-170l528-527q12-11 26.5-17t30.5-6q16 0 31 6t26 18l55 56q12 11 17.5 26t5.5 30q0 16-5.5 30.5T817-647L290-120H120Zm640-584-56-56 56 56Zm-141 85-28-29 57 57-29-28Z"/></svg></a>
+            </div>
+            <div id="userInfo" class="text-center mt-4">
+               <h3
+                class="text-xl font-semibold leading-normal mb-2 text-blueGray-700 mb-2 text-left"
+              >
+                Username: <%= loggedInUser.username %>
+              </h3>
+              <div
+                class="text-sm leading-normal mt-0 mb-4 text-blueGray-400 font-semibold text-left"
+              >
+                <i class="fas fa-map-marker-alt mr-2 text-lg text-blueGray-400"
+                  >Sign in as: <%= loggedInUser.email %></i
+                >
+              </div>
+            </div>
+            <form action="" method="post" id="userUpdateForm" class="hidden">
+              
+                <label
+                  for="inputname"
+                  class="block text-gray-800 font-semibold text-sm"
+                  >User name</label
+                >
+                <div class="mb-2">
+                  <input
+                    type="text"
+                    name="username"
+                    value=""
+                    class="block w-56 rounded-md py-1.5 px-2 ring-1 ring-inset ring-gray-400 focus:text-gray-800"
+                  />
+                </div>
+                <label
+                  for="inputname"
+                  class="block text-gray-800 font-semibold text-sm"
+                  >Email</label
+                >
+                <div class="mb-2">
+                  <input
+                   disabled
+                    type="email"
+                    name="inputname"
+                    value=""
+                    class="w-56 rounded-md py-1.5 px-2 ring-1 ring-inset ring-gray-400 focus:text-gray-800 text-stone-600"
+                  />
+                  <button type="submit" class="bg-blue-600 hover:bg-blue-700 px-4 py-2 ml-4 text-white rounded cursor-pointer">Change</button>
+                </div>
+
+            </form>
+
+            <hr />
+            <div class="mb-2 text-blueGray-600 mt-4 mb-4 text-center">
+              <i class="fas fa-university mr-2 text-lg text-blueGray-400"></i>
+              “If you have knowledge, let others light their candles in it.”
+            </div>
+          </div>
+        </div>
+      </div>
+      <footer class="relative pt-8 pb-6 mt-8">
+        <div class="container mx-auto px-4">
+          <div
+            class="flex flex-wrap items-center md:justify-between justify-center"
+          >
+            <div class="w-full md:w-6/12 px-4 mx-auto text-center"></div>
+          </div>
+        </div>
+      </footer>
+    </section>
+
+    <script>
+      const edit = document.getElementById("EditUserInfo")
+      const userInfo = document.getElementById("userInfo")
+      const userUpdateForm = document.getElementById("userUpdateForm")
+
+      edit.addEventListener("click", (e)=>{
+        e.preventDefault()
+        if(!userInfo.classList.contains("hidden") && userUpdateForm.classList.contains("hidden")){
+          userInfo.classList.add("hidden")
+          userUpdateForm.classList.remove("hidden")
+        } else{
+          userInfo.classList.remove("hidden")
+          userUpdateForm.classList.add("hidden")
+        }
+      })
+    </script>
+  </body>
+</html>

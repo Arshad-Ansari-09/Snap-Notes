@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <title>Document</title>
+  </head>
+  <body class="bg-stone-300">
+    <div>
+      <nav class="bg-stone-100 p-4 shadow-md/20 flex items-center">
+        <!-- Logo -->
+        <div class="mx-4">
+          <h1 class="text-2xl font-semibold">Notefy</h1>
+        </div>
+
+        <!-- Desktop Menu -->
+        <!-- Tablet & Desktop Menu -->
+        <div class="hidden lg:flex lg:space-x-6 sm:space-x-4 mx-4 flex-wrap">
+          <a href="/" class="hover:text-stone-400 text-base lg:text-lg">Home</a>
+          <a href="/friends" class="hover:text-stone-400 text-base lg:text-lg"
+            >Friends</a
+          >
+          <a
+            href="/upload/notes"
+            class="hover:text-stone-400 text-base lg:text-lg"
+            >Upload Notes</a
+          >
+          <a href="/myNotes" class="hover:text-stone-400 text-base lg:text-lg"
+            >My Notes</a
+          >
+
+          <!-- Services Dropdown -->
+          <div class="relative group">
+            <button
+              class="hover:text-stone-400 text-base lg:text-lg flex items-center"
+            >
+              Services
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="ml-1"
+                height="20px"
+                viewBox="0 -960 960 960"
+                width="20px"
+                fill="#000000"
+              >
+                <path d="M480-360 280-560h400L480-360Z" />
+              </svg>
+            </button>
+
+            <!-- Dropdown Content -->
+            <div
+              class="absolute hidden group-hover:block bg-stone-200 shadow-lg rounded-md w-48 z-50"
+            >
+              <a
+                href="/change/profileImg"
+                class="block px-4 py-2 hover:bg-stone-100 text-md text-gray-700"
+                >Change Profile Img</a
+              >
+              <a
+                href="/logout"
+                class="block px-4 py-2 hover:bg-stone-100 text-md text-gray-700"
+                >Logout <svg class="inline" xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="#000000"><path d="M212.31-140Q182-140 161-161q-21-21-21-51.31v-535.38Q140-778 161-799q21-21 51.31-21h268.07v60H212.31q-4.62 0-8.46 3.85-3.85 3.84-3.85 8.46v535.38q0 4.62 3.85 8.46 3.84 3.85 8.46 3.85h268.07v60H212.31Zm436.92-169.23-41.54-43.39L705.08-450H363.85v-60h341.23l-97.39-97.38 41.54-43.39L820-480 649.23-309.23Z"/></svg></a
+              >
+            </div>
+          </div>
+        </div>
+
+        <!-- Profile Icon (desktop only) -->
+        <div class="hidden lg:block ml-auto mx-4">
+          <a href="/profile">
+            <svg
+             class="hover:fill-blue-500"
+             xmlns="http://www.w3.org/2000/svg" 
+             height="24px" 
+             viewBox="0 -960 960 960" 
+             width="24px" 
+             fill="#000000">
+             <path d="M234-276q51-39 114-61.5T480-360q69 0 132 22.5T726-276q35-41 54.5-93T800-480q0-133-93.5-226.5T480-800q-133 0-226.5 93.5T160-480q0 59 19.5 111t54.5 93Zm246-164q-59 0-99.5-40.5T340-580q0-59 40.5-99.5T480-720q59 0 99.5 40.5T620-580q0 59-40.5 99.5T480-440Zm0 360q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q53 0 100-15.5t86-44.5q-39-29-86-44.5T480-280q-53 0-100 15.5T294-220q39 29 86 44.5T480-160Zm0-360q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17Zm0-60Zm0 360Z"/>
+            </svg>
+          </a>
+        </div>
+
+        <!-- Mobile & Tablet Hamburger -->
+        <div class="lg:hidden ml-auto mx-4">
+          <button id="menu-btn" class="focus:outline-none">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="w-8 h-8"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M4 6h16M4 12h16M4 18h16"
+              />
+            </svg>
+          </button>
+        </div>
+      </nav>
+
+      <div
+        id="mobile-overlay"
+        class="hidden fixed inset-0 bg-black/30 backdrop-blur-sm z-40"
+      ></div>
+
+      <!-- Mobile Menu -->
+      <div
+        id="mobile-menu"
+        class="hidden md:hidden fixed top-16 left-0 right-0 bg-stone-100 rounded-b-xl flex flex-col items-start space-y-4 py-4 px-8 z-50 shadow-lg"
+      >
+        <a href="/" class="hover:text-stone-400 text-lg w-full">Home</a>
+        <a href="/friends" class="hover:text-stone-400 text-lg w-full"
+          >Friends</a
+        >
+        <a href="/upload/notes" class="hover:text-stone-400 text-lg w-full"
+          >Upload Notes</a
+        >
+        <a href="/myNotes" class="hover:text-stone-400 text-lg w-full"
+          >My Notes</a
+        >
+        <a href="/change/profileImg" class="hover:text-stone-400 text-lg w-full"
+          >Change Profile Img</a
+        >
+        <a href="/logout" class="hover:text-stone-400 text-lg w-full">Logout</a>
+        <a href="/profile" class="hover:text-stone-400 text-lg w-full"
+          >Profile</a
+        >
+      </div>
+
+      <!-- Toggle Script -->
+      <script>
+        const btn = document.getElementById("menu-btn");
+        const menu = document.getElementById("mobile-menu");
+
+        btn.addEventListener("click", () => {
+          menu.classList.toggle("hidden");
+        });
+      </script>
+    </div>
+  </body>
+</html>

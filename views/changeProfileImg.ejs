@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <title>Document</title>
+</head>
+<body class="bg-stone-300">
+
+  <%- include("./partials/navBar") %>
+
+    <form action="" method="post" enctype="multipart/form-data">
+      <div class="max-w-md mx-auto rounded-lg overflow-hidden md:max-w-xl">
+        <div class="md:flex">
+          <div class="w-full p-3">
+            <div
+              class="relative h-48 rounded-lg border-2 border-blue-500 bg-gray-200 flex justify-center items-center shadow-lg hover:shadow-xl transition-shadow duration-300 ease-in-out"
+            >
+              <div class="absolute flex flex-col items-center">
+                <img
+                  alt="File Icon"
+                  class="mb-3"
+                  src="https://img.icons8.com/dusk/64/000000/file.png"
+                />
+                <span class="block text-gray-500 font-semibold">
+                  Drag &amp; drop your files here
+                </span>
+                <span class="block text-gray-400 font-normal mt-1">
+                  or click to upload
+                </span>
+              </div>
+
+
+              <input
+                name="profileImg"
+                class="h-full w-full opacity-0 cursor-pointer"
+                type="file"
+                multiple
+              />
+            </div>
+          </div>
+        </div>
+        <button
+          type="submit"
+          class="bg-blue-600 px-18 py-2 rounded-md hover:bg-blue-700 text-white cursor-pointer ml-48"
+        >
+          Change
+        </button>
+      </div>
+    </form>
+    
+</body>
+</html>

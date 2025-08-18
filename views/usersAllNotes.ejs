@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <title>Document</title>
+</head>
+<body class="bg-stone-300 scrollbar-hide overflow-hidden">
+
+    <%- include("./partials/navBar") %>
+
+    <h1 class="text-2xl font-semibold mb-4 pt-6 px-4"><%= user.username %>'s All Notes</h1>
+    <div class="h-[100vh] w-[100vw] px-4 py-4 scrollbar-hide flex flex-wrap gap-4">
+          <% notes.reverse().forEach(note => { %>
+           <div class=" shadow-md/20 w-54 h-[275px] overflow-x-auto overflow-y-auto rounded hover:shadow-md/40 px-4 py-2">
+              <img class="h-44 w-full rounded object-cover cursor-pointer mb-2" src="<%= note.notesImages[0] %>" alt="" />
+              <h1><span class="font-semibold">Class Name:</span> <%= note.classname %></h1>
+              <h1><span class="font-semibold">Notes Info:</span> <%= note.notesInfo %></h1>
+          </div>
+          <% }) %>
+    </div>
+    
+     <style>
+    .scrollbar-hide::-webkit-scrollbar {
+      display: none;
+    }
+  </style>
+</body>
+</html>

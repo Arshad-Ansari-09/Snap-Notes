@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <title>Document</title>
+  </head>
+  <body class="bg-stone-300">
+
+    <%- include("./partials/navBar") %>
+
+    <div
+      class="scrollbar-hide mx-4 my-2 flex gap-2 flex-wrap justify-around h-[500px] overflow-auto mt-4"
+    >
+      <% notes.forEach(note => { %>
+      <div
+        class="border-1 border-stone-700 h-[305px] w-60 overflow-hidden rounded shadow-md/20 px-4 py-2 mb-2 scrollbar-hide"
+      >
+        <img
+          class="preview-img h-44 w-full rounded object-cover cursor-pointer"
+          src="<%= note.notesImages[0] %>"
+          data-images='<%= JSON.stringify(note.notesImages) %>'
+          alt=""
+        />
+        <div class="flex justify-between">
+        <div id="noteDetail" class="">
+         <h1><span class="font-semibold">Class name: </span><%= note.classname %></h1>
+        <h1>
+          <span class="font-semibold">Notes info:</span> <%= note.notesInfo %>
+        </h1>
+        <h1>
+          <span class="font-semibold">By:</span> <%= note.user.username %>
+        </h1>
+        <div class="flex justify-between items-center">
+          <a
+            href="/deleteNotes/<%= note._id %>"
+            class="bg-red-600 hover:bg-red-700 text-white px-2 py-1 rounded mt-2 cursor-pointer hover:bg-blue-800"
+            >Delete</a
+          >
+          </div>
+         </div>
+          <form id="updateNotesForm" action="/updateNote/<%= note._id %>" method="post" class="hidden">
+            <input class="mt-3 border-1 border-stone-700 rounded pl-1 w-44" placeholder="Class Name" type="text" name="classname" value="<%= note.classname %>">
+            <input class="mt-3 border-1 border-stone-700 rounded pl-1 w-44" placeholder="Notes Info" type="text" name="notesInfo" value="<%= note.notesInfo %>">
+            <button
+              type="submit"
+              class="bg-yellow-600 hover:bg-yellow-500 text-white px-2 py-1 rounded mt-2 cursor-pointer hover:bg-blue-800"
+              >Update</button
+            >
+          </form>
+         <div class="flex justify-end items-start">
+          <svg id="editBtn" class="hover:fill-blue-600 cursor-pointer" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000"><path d="M200-200h57l391-391-57-57-391 391v57Zm-80 80v-170l528-527q12-11 26.5-17t30.5-6q16 0 31 6t26 18l55 56q12 11 17.5 26t5.5 30q0 16-5.5 30.5T817-647L290-120H120Zm640-584-56-56 56 56Zm-141 85-28-29 57 57-29-28Z"/></svg>
+        </div>
+        </div>
+      </div>
+      <% }) %>
+    </div>
+
+    <style>
+  .overlay {
+    position: fixed;
+    top:0; left:0;
+    width: 100vw; height: 100vh;
+    background: rgba(0,0,0,0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+  }
+  .overlay img {
+    max-width: 90%;
+    max-height: 80%;
+  }
+  .nav-btn {
+    position: absolute;
+    top: 50%;
+    font-size: 2rem;
+    background: transparent;
+    border: none;
+    color: white;
+    cursor: pointer;
+    user-select: none;
+  }
+  #prevBtn { left: 10px; }
+  #nextBtn { right: 10px; }
+    </style>
+
+    <script>
+      const editBtn = document.getElementById("editBtn")
+      const updateNotesForm = document.getElementById("updateNotesForm")
+      const noteDetail = document.getElementById("noteDetail")
+
+      editBtn.addEventListener("click", ()=>{
+        if(updateNotesForm.classList.contains("hidden") && !noteDetail.classList.contains("hidden")){
+          updateNotesForm.classList.remove("hidden")
+          noteDetail.classList.add("hidden")
+        } else{
+          updateNotesForm.classList.add("hidden")
+          noteDetail.classList.remove("hidden")
+        }
+      })
+
+      // Logic for Image preview
+      document.querySelectorAll(".preview-img").forEach(img => {
+  img.addEventListener("click", () => {
+    const images = JSON.parse(img.dataset.images);
+    let currentIndex = 0;
+
+    // Create overlay
+    const overlay = document.createElement("div");
+    overlay.classList.add("overlay");
+
+    // Image element
+    const displayImg = document.createElement("img");
+    displayImg.src = images[currentIndex];
+    overlay.appendChild(displayImg);
+
+    // Navigation buttons
+    const prevBtn = document.createElement("button");
+    prevBtn.id = "prevBtn";
+    prevBtn.classList.add("nav-btn");
+    prevBtn.innerHTML = "&#10094;"; // Left arrow
+    overlay.appendChild(prevBtn);
+
+    const nextBtn = document.createElement("button");
+    nextBtn.id = "nextBtn";
+    nextBtn.classList.add("nav-btn");
+    nextBtn.innerHTML = "&#10095;"; // Right arrow
+    overlay.appendChild(nextBtn);
+
+    // Show previous image
+    prevBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      currentIndex = (currentIndex - 1 + images.length) % images.length;
+      displayImg.src = images[currentIndex];
+    });
+
+    // Show next image
+    nextBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      currentIndex = (currentIndex + 1) % images.length;
+      displayImg.src = images[currentIndex];
+    });
+
+    // Keyboard support
+    const keyHandler = (e) => {
+      if (e.key === "ArrowLeft") prevBtn.click();
+      if (e.key === "ArrowRight") nextBtn.click();
+      if (e.key === "Escape") closeOverlay();
+    };
+    document.addEventListener("keydown", keyHandler);
+
+    // Close overlay
+    const closeOverlay = () => {
+      overlay.remove();
+      document.removeEventListener("keydown", keyHandler);
+    };
+
+    overlay.addEventListener("click", closeOverlay);
+
+    document.body.appendChild(overlay);
+  });
+});
+
+    </script>
+  </body>
+</html>
