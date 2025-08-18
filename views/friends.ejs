@@ -14,11 +14,11 @@
     <div class='flex flex-col md:flex-row justify-between px-2 md:px-6'>
 
       <!-- Friends Profile -->
-       <div id="friendsContainer" class="flex flex-col h-[90vh] w-full md:w-98 scrollbar-hide overflow-auto md:block">
+       <div id="friendsContainer" class="flex flex-col h-[90vh] w-full md:w-[470px] scrollbar-hide overflow-auto md:block">
         <% friends.reverse().forEach(friend => { %>
-         <a href="/friend/<%= friend._id %>/notes" class="mt-4 inline" onclick="showNotes(event)">
+         <a href="/friend/<%= friend._id %>/notes" class="mt-4 inline-block" onclick="showNotes(event)">
           <div
-            class="scrollbar-hide border-black h-18 w-74 items-center px-4 py-2 mt-2 flex gap-4 rounded-lg bg-stone-300 shadow-md/40 overflow-auto <%= user && user._id.toString() === friend._id.toString() ? 'border-2 border-blue-500' : 'border-black' %>"
+            class="scrollbar-hide border-black h-18  md:w-74 sm:w-[90vw] items-center px-4 py-2 mt-2 flex gap-4 rounded-lg bg-stone-300 shadow-md/40 overflow-auto <%= user && user._id.toString() === friend._id.toString() ? 'md:border-2 border-blue-500' : 'md:border-black' %>"
           >
             <div class="h-full w-12 rounded">
               <img
@@ -33,12 +33,12 @@
           </div>
         </a>
         <a href="/delete/friend/<%= friend._id %>">
-          <svg class="hover:fill-red-700 cursor-pointer" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000"><path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z"/></svg>
+          <svg class="hover:fill-red-700 cursor-pointer inline" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000"><path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z"/></svg>
         </a>
        <% }) %>
        </div>
 
-        <div id="notesContainer" class="hidden md:block h-[90vh] w-full pl-2 md:pl-6 py-2 overflow-auto scrollbar-hide">
+        <div id="notesContainer" class="hidden md:block h-[90vh] w-full md:w-[550px] lg:w-[750px] xl:w-full pl-2 md:pl-6 py-2 overflow-auto scrollbar-hide">
            <% if (user) { %>
 
             <h1 class="text-2xl font-semibold mb-2"><%= user.username %>'s notes</h1>
@@ -128,7 +128,7 @@
                  <input
                     type="text"
                     id="nameInput"
-                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[150px] sm:w-[200px] sm:w-[200px] p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[150px] sm:w-[200px] p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     placeholder="Search by name or notes info"
                   />
 
