@@ -38,10 +38,10 @@
        <% }) %>
        </div>
 
-        <div id="Container" class="h-[90vh] w-[100%] px-6 py-4 overflow-auto scrollbar-hide">
+        <div id="Container" class="h-[90vh] w-[100%] pl-6 py-2 overflow-auto scrollbar-hide">
            <% if (user) { %>
 
-            <h1 class="text-2xl font-semibold mb-1"><%= user.username %>'s notes</h1>
+            <h1 class="text-2xl font-semibold mb-2"><%= user.username %>'s notes</h1>
             <!-- Filter NavBar -->
              <nav class="h-[50px] w-full bg-stone-100 shadow-md/20 mb-4 flex py-2 px-4 items-center rounded">
                <label class="mx-4 hidden sm:inline-block">Sort By: </label>
@@ -132,7 +132,8 @@
              </nav>
 
              <!-- User's Notes -->
-             <% user.posts.reverse().forEach(post => { %>
+             <div class="flex flex-wrap gap-2 justify-around">
+              <% user.posts.reverse().forEach(post => { %>
               
             <div class="note-card border-1 border-stone-700 h-[250px] w-60 overflow-hidden rounded shadow-md/20 px-4 py-2 mb-2 scrollbar-hide hover:shadow-xl/20 transition">
               <div class="relative">
@@ -166,6 +167,7 @@
             <h1 class="notesInfo"><span class="font-semibold">Notes Info:</span> <%= post.notesInfo %> </h1>
           </div>
              <% }) %>
+             </div>
            <% } else { %>
             <h1 class="text-center text-4xl">Nothing to see here.</h1>
             <% } %>
