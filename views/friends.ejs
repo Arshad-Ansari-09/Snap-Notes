@@ -11,12 +11,12 @@
 
   <%- include("./partials/navBar") %>
 
-    <div class='flex justify-between px-6'>
+    <div class='flex flex-col md:flex-row justify-between px-2 md:px-6'>
 
       <!-- Friends Profile -->
-       <div class="flex flex-col h-[90vh] w-98 scrollbar-hide overflow-auto">
+       <div id="friendsContainer" class="flex flex-col h-[90vh] w-full md:w-98 scrollbar-hide overflow-auto md:block">
         <% friends.reverse().forEach(friend => { %>
-         <a href="/friend/<%= friend._id %>/notes" class="mt-4 inline">
+         <a href="/friend/<%= friend._id %>/notes" class="mt-4 inline" onclick="showNotes(event)">
           <div
             class="scrollbar-hide border-black h-18 w-74 items-center px-4 py-2 mt-2 flex gap-4 rounded-lg bg-stone-300 shadow-md/40 overflow-auto <%= user && user._id.toString() === friend._id.toString() ? 'border-2 border-blue-500' : 'border-black' %>"
           >
@@ -38,10 +38,14 @@
        <% }) %>
        </div>
 
-        <div id="Container" class="h-[90vh] w-[100%] pl-6 py-2 overflow-auto scrollbar-hide">
+        <div id="notesContainer" class="hidden md:block h-[90vh] w-full pl-2 md:pl-6 py-2 overflow-auto scrollbar-hide">
            <% if (user) { %>
 
             <h1 class="text-2xl font-semibold mb-2"><%= user.username %>'s notes</h1>
+            <button onclick="goBackToFriends()" class="md:hidden mb-2 px-4 py-1 bg-blue-500 text-white rounded">
+               ⬅ Back to Friends
+             </button>
+
             <!-- Filter NavBar -->
              <nav class="h-[50px] w-full bg-stone-100 shadow-md/20 mb-4 flex py-2 px-4 items-center rounded">
                <label class="mx-4 hidden sm:inline-block">Sort By: </label>
@@ -406,6 +410,32 @@ document.querySelectorAll('.download-pdf-btn').forEach(btn => {
    
   });
 });
+
+// Handle mobile reload state
+window.addEventListener("DOMContentLoaded", () => {
+  if (window.innerWidth < 768 && localStorage.getItem("showNotes") === "true") {
+    document.getElementById("friendsContainer").classList.add("hidden");
+    document.getElementById("notesContainer").classList.remove("hidden");
+    localStorage.removeItem("showNotes");
+  }
+});
+
+
+function showNotes(e) {
+  if (window.innerWidth < 768) {
+    e.preventDefault();
+    localStorage.setItem("showNotes", "true"); // Set flag to show notes after reload
+    const href = e.currentTarget.getAttribute("href");
+    window.location.href = href; // Navigate normally (no reload)
+  }
+}
+
+
+  function goBackToFriends() {
+    document.getElementById("notesContainer").classList.add("hidden");
+    document.getElementById("friendsContainer").classList.remove("hidden");
+    window.history.pushState({}, '', '/friends'); // or your main route
+  }
     </script>
 
 </body>
