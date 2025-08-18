@@ -221,8 +221,8 @@
       container.forEach((box) => {
         const className = box.querySelector(".className")
         if (
-          (classFilter.value.toLowerCase() === "class" || className.textContent.toLowerCase().includes(classFilter.value.toLowerCase())) &&
-          (e.target.value.toLowerCase() === "sem" || className.textContent.toLowerCase().includes(e.target.value.toLowerCase()))
+          (classFilter.value.toLowerCase() === "class" || className.textContent.toLowerCase().replace(/[\W_]/g, '').includes(classFilter.value.toLowerCase().replace(/[\W_]/g, ''))) &&
+          (e.target.value.toLowerCase() === "sem" || className.textContent.toLowerCase().replace(/[\W_]/g, '').includes(e.target.value.toLowerCase().replace(/[\W_]/g, '')))
         ) {
           box.style.display = "block"
         } else {

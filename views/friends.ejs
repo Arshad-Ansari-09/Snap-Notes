@@ -44,7 +44,7 @@
             <h1 class="text-2xl font-semibold mb-1"><%= user.username %>'s notes</h1>
             <!-- Filter NavBar -->
              <nav class="h-[50px] w-full bg-stone-100 shadow-md/20 mb-4 flex py-2 px-4 items-center rounded">
-               <label class="mx-4">Sort By: </label>
+               <label class="mx-4 hidden sm:inline-block">Sort By: </label>
        
                <div class="space-x-4 flex">
                  <select
@@ -120,6 +120,14 @@
                      8th
                    </option>
                  </select>
+
+                 <input
+                    type="text"
+                    id="nameInput"
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[160px] sm:w-[200px] sm:w-[200px] p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    placeholder="Search by name or notes info"
+                  />
+
                </div>
              </nav>
 
@@ -217,8 +225,8 @@
       container.forEach((box) => {
         const className = box.querySelector(".className")
         if (
-          className.textContent.toLowerCase().includes(e.target.value.toLowerCase()) &&
-          (semFilter.value.toLowerCase() === "sem" || className.textContent.toLowerCase().includes(semFilter.value.toLowerCase()))
+          className.textContent.toLowerCase().replace(/[\W_]/g, '').includes(e.target.value.toLowerCase().replace(/[\W_]/g, '')) &&
+          (semFilter.value.toLowerCase() === "sem" || className.textContent.toLowerCase().replace(/[\W_]/g, '').includes(semFilter.value.toLowerCase().replace(/[\W_]/g, '')))
         ) {
           box.style.display = "block"
         } else {
@@ -231,11 +239,26 @@
       container.forEach((box) => {
         const className = box.querySelector(".className")
         if (
-          (classFilter.value.toLowerCase() === "class" || className.textContent.toLowerCase().includes(classFilter.value.toLowerCase())) &&
-          (e.target.value.toLowerCase() === "sem" || className.textContent.toLowerCase().includes(e.target.value.toLowerCase()))
+          (classFilter.value.toLowerCase() === "class" || className.textContent.toLowerCase().replace(/[\W_]/g, '').includes(classFilter.value.toLowerCase().replace(/[\W_]/g, ''))) &&
+          (e.target.value.toLowerCase() === "sem" || className.textContent.toLowerCase().replace(/[\W_]/g, '').includes(e.target.value.toLowerCase().replace(/[\W_]/g, '')))
         ) {
           box.style.display = "block"
         } else {
+          box.style.display = "none"
+        }
+      })
+    });
+
+    nameInput.addEventListener("input",()=>{
+      container.forEach((box)=>{
+        const username = box.querySelector(".userName")
+        const notesInfo = box.querySelector(".notesInfo")
+        if (!notesInfo) return;
+        if(
+          notesInfo.textContent.toLowerCase().replace(/[\W_]/g, '').includes(nameInput.value.toLowerCase().replace(/[\W_]/g, ''))
+        ) {
+          box.style.display = "block"
+        } else{
           box.style.display = "none"
         }
       })
