@@ -22,7 +22,7 @@ async function signup(req, res) {
         username,
         email,
         password: hashedPassword,
-        profileImg: "https://res.cloudinary.com/da3xuvuus/image/upload/v1755373377/default_gso3yu.jpg", // 👈 default image
+        profileImg: "https://res.cloudinary.com/da3xuvuus/image/upload/v1755686150/default_ldpsps.jpg", // 👈 default image
     })
     return res.redirect("/login")
 }
