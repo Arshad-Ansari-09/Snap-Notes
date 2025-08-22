@@ -83,6 +83,16 @@ function changeProfileImgPage(req, res){
 
 async function changeProfileImg(req, res){
     const loggedInUser = await User.findOne({ email: req.user.email });
+    
+    // Delete old profile image from Cloudinary if it's not the default image
+    if (loggedInUser.profileImg && !loggedInUser.profileImg.includes("default_ldpsps.jpg")) {
+        const parts = loggedInUser.profileImg.split("/");
+        const fileName = parts[parts.length - 1];
+        const publicId = `profile_img/${fileName.split(".")[0]}`;
+        await cloudinary.uploader.destroy(publicId);
+    }
+
+    // Update with new uploaded image
     loggedInUser.profileImg = req.file.path;
     await loggedInUser.save();
     res.redirect("/profile")
@@ -164,7 +174,24 @@ async function myNotesPage(req, res) {
 
 // Delete my notes
 async function deleteNotes(req, res){
-    const notes = await Notes.findOneAndDelete({id: req.params._id})
+    // const notes = await Notes.findOneAndDelete({id: req.params._id})  // 👉👈 Delete notes only from app but not from cloudinary
+
+    const note = await Notes.findById(req.params._id); // find the note by MongoDB _id
+    if (!note) return res.redirect("/myNotes");
+
+    // Delete all images of this note from Cloudinary
+    if (note.notesImages && note.notesImages.length > 0) {
+        for (const imgUrl of note.notesImages) {
+            // Extract public_id from the URL
+            const parts = imgUrl.split("/"); // split URL by "/"
+            const fileName = parts[parts.length - 1]; // get last part (file name with extension)
+            const publicId = `notes_images/${fileName.split(".")[0]}`; // remove extension and add folder name
+            await cloudinary.uploader.destroy(publicId);
+        }
+    }
+
+    // Delete the note from MongoDB
+    await Notes.findByIdAndDelete(req.params._id);
     res.redirect("/myNotes")
 }
 
