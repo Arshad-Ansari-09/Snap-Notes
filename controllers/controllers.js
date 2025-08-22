@@ -17,6 +17,12 @@ function signupPage(req, res) {
 
 async function signup(req, res) {
     const { username, email, password } = req.body;
+
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+        return res.render("signup", { error: "Email already registered!" });
+    }
+    
     const hashedPassword = await bcrypt.hash(password, 10);
     const user = await User.create({
         username,
@@ -24,7 +30,9 @@ async function signup(req, res) {
         password: hashedPassword,
         profileImg: "https://res.cloudinary.com/da3xuvuus/image/upload/v1755686150/default_ldpsps.jpg", // 👈 default image
     })
-    return res.redirect("/login")
+    const token = signToken({ email, _id: user._id })
+    res.cookie("token", token, { httpOnly: true })
+    res.redirect("/")
 }
 
 // Login
