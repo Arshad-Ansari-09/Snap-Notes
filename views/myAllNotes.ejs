@@ -17,7 +17,7 @@
     <% if (notes.length > 0) { %>
      <% notes.forEach(note => { %>
       <div
-        class="border-1 border-stone-700 h-[305px] w-60 overflow-hidden rounded shadow-md/20 px-4 py-2 mb-2 scrollbar-hide"
+        class="main border-1 border-stone-700 h-[305px] w-60 overflow-hidden rounded shadow-md/20 px-4 py-2 mb-2 scrollbar-hide"
       >
         <img
           class="preview-img h-44 w-full rounded object-cover cursor-pointer"
@@ -26,7 +26,7 @@
           alt=""
         />
         <div class="flex justify-between">
-        <div id="noteDetail" class="">
+        <div class="noteDetail">
          <h1><span class="font-semibold">Class name: </span><%= note.classname %></h1>
         <h1>
           <span class="font-semibold">Notes info:</span> <%= note.notesInfo %>
@@ -42,7 +42,7 @@
           >
           </div>
          </div>
-          <form id="updateNotesForm" action="/updateNote/<%= note._id %>" method="post" class="hidden">
+          <form class="updateNotesForm hidden" action="/updateNote/<%= note._id %>" method="post">
             <input class="mt-3 border-1 border-stone-700 rounded pl-1 w-44" placeholder="Class Name" type="text" name="classname" value="<%= note.classname %>">
             <input class="mt-3 border-1 border-stone-700 rounded pl-1 w-44" placeholder="Notes Info" type="text" name="notesInfo" value="<%= note.notesInfo %>">
             <button
@@ -52,7 +52,7 @@
             >
           </form>
          <div class="flex justify-end items-start">
-          <svg id="editBtn" class="hover:fill-blue-600 cursor-pointer" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000"><path d="M200-200h57l391-391-57-57-391 391v57Zm-80 80v-170l528-527q12-11 26.5-17t30.5-6q16 0 31 6t26 18l55 56q12 11 17.5 26t5.5 30q0 16-5.5 30.5T817-647L290-120H120Zm640-584-56-56 56 56Zm-141 85-28-29 57 57-29-28Z"/></svg>
+          <svg class="editBtn hover:fill-blue-600 cursor-pointer" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000"><path d="M200-200h57l391-391-57-57-391 391v57Zm-80 80v-170l528-527q12-11 26.5-17t30.5-6q16 0 31 6t26 18l55 56q12 11 17.5 26t5.5 30q0 16-5.5 30.5T817-647L290-120H120Zm640-584-56-56 56 56Zm-141 85-28-29 57 57-29-28Z"/></svg>
         </div>
         </div>
       </div>
@@ -92,20 +92,22 @@
   #nextBtn { right: 10px; }
     </style>
 
-    <script>
-      const editBtn = document.getElementById("editBtn")
-      const updateNotesForm = document.getElementById("updateNotesForm")
-      const noteDetail = document.getElementById("noteDetail")
-
-      editBtn.addEventListener("click", ()=>{
-        if(updateNotesForm.classList.contains("hidden") && !noteDetail.classList.contains("hidden")){
-          updateNotesForm.classList.remove("hidden")
-          noteDetail.classList.add("hidden")
-        } else{
-          updateNotesForm.classList.add("hidden")
-          noteDetail.classList.remove("hidden")
+<script>
+    document.querySelectorAll(".editBtn").forEach((editBtn) => {
+      const card = editBtn.closest(".main");
+      const updateNotesForm = card.querySelector(".updateNotesForm");
+      const noteDetail = card.querySelector(".noteDetail");
+    
+      editBtn.addEventListener("click", () => {
+        if (updateNotesForm.classList.contains("hidden") && !noteDetail.classList.contains("hidden")) {
+          updateNotesForm.classList.remove("hidden");
+          noteDetail.classList.add("hidden");
+        } else {
+          updateNotesForm.classList.add("hidden");
+          noteDetail.classList.remove("hidden");
         }
-      })
+     });
+   });
 
       // Logic for Image preview
       document.querySelectorAll(".preview-img").forEach(img => {
