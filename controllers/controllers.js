@@ -83,7 +83,7 @@ function changeProfileImgPage(req, res){
 
 async function changeProfileImg(req, res){
     const loggedInUser = await User.findOne({ email: req.user.email });
-    
+
     // Delete old profile image from Cloudinary if it's not the default image
     if (loggedInUser.profileImg && !loggedInUser.profileImg.includes("default_ldpsps.jpg")) {
         const parts = loggedInUser.profileImg.split("/");
@@ -144,12 +144,6 @@ async function addToFriends(req, res) {
             await loggedInUser.save();
         }
 
-        // OPTIONAL: Make it mutual means when you add friends you also getadded as his friend best for chat app
-        // if (!friendToAdd.friends.includes(loggedInUser._id)) {
-        //     friendToAdd.friends.push(loggedInUser._id);
-        //     await friendToAdd.save();
-        // }
-
         res.redirect("/");
     } catch (err) {
         console.error(err);
@@ -174,8 +168,9 @@ async function myNotesPage(req, res) {
 
 // Delete my notes
 async function deleteNotes(req, res){
-    // const notes = await Notes.findOneAndDelete({id: req.params._id})  // 👉👈 Delete notes only from app but not from cloudinary
+    // const notes = await Notes.findOneAndDelete({id: req.params._id})  // 👉 Delete notes only from app but not from cloudinary which don't free up cloudinary space even if user deletes its notes.
 
+    // 👇 Delete notes from cloudinary also which free up space every time user delete it's notes    
     const note = await Notes.findById(req.params._id); // find the note by MongoDB _id
     if (!note) return res.redirect("/myNotes");
 
