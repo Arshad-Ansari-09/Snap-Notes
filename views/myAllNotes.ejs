@@ -14,7 +14,8 @@
     <div
       class="scrollbar-hide mx-4 my-2 flex gap-2 flex-wrap justify-around h-[500px] overflow-auto mt-4"
     >
-      <% notes.forEach(note => { %>
+    <% if (notes.length > 0) { %>
+     <% notes.forEach(note => { %>
       <div
         class="border-1 border-stone-700 h-[305px] w-60 overflow-hidden rounded shadow-md/20 px-4 py-2 mb-2 scrollbar-hide"
       >
@@ -56,6 +57,10 @@
         </div>
       </div>
       <% }) %>
+    <% } else { %> 
+      <h1 class="text-center text-4xl">Upload to see your Notes.</h1>
+      <% } %>
+      
     </div>
 
     <style>
