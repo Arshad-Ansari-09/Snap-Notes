@@ -87,8 +87,9 @@
                 <div class="mb-2">
                   <input
                     type="text"
+                    required
                     name="username"
-                    value=""
+                    value="<%= loggedInUser.username %>"
                     class="block w-56 rounded-md py-1.5 px-2 ring-1 ring-inset ring-gray-400 focus:text-gray-800"
                   />
                 </div>
@@ -102,7 +103,7 @@
                    disabled
                     type="email"
                     name="inputname"
-                    value=""
+                    value="<%= loggedInUser.email %>"
                     class="w-56 rounded-md py-1.5 px-2 ring-1 ring-inset ring-gray-400 focus:text-gray-800 text-stone-600"
                   />
                   <button type="submit" class="bg-blue-600 hover:bg-blue-700 px-4 py-2 ml-4 text-white rounded cursor-pointer">Change</button>
