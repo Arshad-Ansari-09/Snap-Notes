@@ -368,7 +368,7 @@ document.querySelectorAll('.download-pdf-btn').forEach(btn => {
   });
 
   // Handle Images download
-  menu.querySelector('.download-as-images').addEventListener('click', () => {
+  menu.querySelector('.download-as-images').addEventListener('click', async () => {
      menu.classList.add("hidden");
     const images = JSON.parse(btn.dataset.images);
     const classname = btn.dataset.classname || "Notes";
@@ -376,14 +376,20 @@ document.querySelectorAll('.download-pdf-btn').forEach(btn => {
     icon.classList.add("hidden");
     spinner.classList.remove("hidden");
 
-    images.forEach((imgUrl, index) => {
-      const link = document.createElement("a");
-      link.href = imgUrl;
-      link.download = `${classname}-${index + 1}.jpg`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    });
+    for (let i = 0; i < images.length; i++) {
+    const response = await fetch(images[i], { mode: "cors" });
+    const blob = await response.blob();
+    const url = URL.createObjectURL(blob);
+
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `${classname}-${i + 1}.jpg`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    URL.revokeObjectURL(url); // cleanup
+  }
 
     spinner.classList.add("hidden");
     icon.classList.remove("hidden");
