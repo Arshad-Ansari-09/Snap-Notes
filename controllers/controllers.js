@@ -140,7 +140,7 @@ async function uploadNotes(req, res) {
 async function updateNotes(req, res) {
     try {
         const { classname, notesInfo } = req.body;
-        const currentNote = await Notes.findOneAndUpdate({ _id: req.params.id, userId: req.user._id }, { classname, notesInfo }, { new: true })
+        const currentNote = await Notes.findOneAndUpdate({ _id: req.params.id, user: req.user._id }, { classname, notesInfo }, { new: true })
 
         if (!currentNote) {
             return res.status(403).send("Forbidden: You can only update your own notes");
@@ -211,7 +211,7 @@ async function deleteNotes(req, res) {
     }
 
     // Delete the note from MongoDB
-    await Notes.findOneAndDelete({ _id: req.params.id, userId: req.user._id });
+    await Notes.findOneAndDelete({ _id: req.params.id, user: req.user._id });
     res.redirect("/myNotes")
 }
 
