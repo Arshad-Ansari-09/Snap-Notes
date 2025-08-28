@@ -1,9 +1,9 @@
 const cloudinary = require("cloudinary").v2;
 
 cloudinary.config({
-  cloud_name: process.env.CLOUD_NAME,
-  api_key: process.env.CLOUD_API_KEY,
-  api_secret: process.env.CLOUD_API_SECRET,
+    cloud_name: process.env.CLOUD_NAME,
+    api_key: process.env.CLOUD_API_KEY,
+    api_secret: process.env.CLOUD_API_SECRET,
 });
 
 const { Notes } = require("../model/notesModel")
@@ -13,7 +13,7 @@ const bcrypt = require("bcrypt")
 
 // Home
 async function homePage(req, res) {
-    const loggedInUser = await User.findOne({email: req.user.email}).populate("friends")
+    const loggedInUser = await User.findOne({ email: req.user.email }).populate("friends")
     const notes = await Notes.find({}).populate("user").sort({ date: -1 })
     return res.render("home", { notes, loggedInUser })
 }
@@ -30,7 +30,7 @@ async function signup(req, res) {
     if (existingUser) {
         return res.render("signup", { error: "Email already registered!" });
     }
-    
+
     const hashedPassword = await bcrypt.hash(password, 10);
     const user = await User.create({
         username,
@@ -68,7 +68,7 @@ async function login(req, res) {
 // Friends Page
 async function friendsPage(req, res) {
     const loggedInUser = await User.findOne({ email: req.user.email }).populate("friends");
-    const user = await User.findOne({_id: req.params.id}).populate("posts")
+    const user = await User.findOne({ _id: req.params.id }).populate("posts")
     res.render("friends", { friends: loggedInUser.friends, user });
 }
 
@@ -83,7 +83,7 @@ async function usersAllNotes(req, res) {
 async function profilePage(req, res) {
     const loggedInUser = await User.findOne({ email: req.user.email }).populate("posts")
     const allUsersWithMeInFriends = await User.find({ friends: req.user._id });
-    return res.render("profile", { loggedInUser, followers:allUsersWithMeInFriends })
+    return res.render("profile", { loggedInUser, followers: allUsersWithMeInFriends })
 }
 
 async function profile(req, res) {
@@ -93,11 +93,11 @@ async function profile(req, res) {
 }
 
 // Change Profile Image
-function changeProfileImgPage(req, res){
+function changeProfileImgPage(req, res) {
     res.render("changeProfileImg")
 }
 
-async function changeProfileImg(req, res){
+async function changeProfileImg(req, res) {
     const loggedInUser = await User.findOne({ email: req.user.email });
 
     // Delete old profile image from Cloudinary if it's not the default image
@@ -137,10 +137,19 @@ async function uploadNotes(req, res) {
 }
 
 // Update Notes
-async function updateNotes(req, res){
-    const {classname, notesInfo} = req.body;
-    const currentNote = await Notes.findOneAndUpdate({ _id: req.params.id}, { classname, notesInfo }, { new: true })
-    res.redirect("/myNotes")
+async function updateNotes(req, res) {
+    try {
+        const { classname, notesInfo } = req.body;
+        const currentNote = await Notes.findOneAndUpdate({ _id: req.params.id, userId: req.user._id }, { classname, notesInfo }, { new: true })
+
+        if (!currentNote) {
+            return res.status(403).send("Forbidden: You can only update your own notes");
+        }
+
+        res.redirect("/myNotes")
+    } catch (error) {
+        res.status(500).send("Server error, please try again later");
+    }
 }
 
 // Add Friends
@@ -168,8 +177,8 @@ async function addToFriends(req, res) {
 }
 
 // Delete Friends
-async function deleteFriend(req, res){
-    const loggedInUser = await User.findOne({email: req.user.email})
+async function deleteFriend(req, res) {
+    const loggedInUser = await User.findOne({ email: req.user.email })
     loggedInUser.friends.pull(req.params.id)  // Pull removes matching ID from array(searchedFriends)
     loggedInUser.save()
     res.redirect("/friends")
@@ -183,11 +192,11 @@ async function myNotesPage(req, res) {
 }
 
 // Delete my notes
-async function deleteNotes(req, res){
+async function deleteNotes(req, res) {
     // const notes = await Notes.findOneAndDelete({id: req.params._id})  // 👉 Delete notes only from app but not from cloudinary which don't free up cloudinary space even if user deletes its notes.
 
     // 👇 Delete notes from cloudinary also which free up space every time user delete it's notes    
-    const note = await Notes.findById(req.params.id); // find the note by MongoDB _id
+    const note = await Notes.findOne({ _id: req.params.id, userId: req.user._id }); // find the note by MongoDB _id
     if (!note) return res.redirect("/myNotes");
 
     // Delete all images of this note from Cloudinary
@@ -202,7 +211,7 @@ async function deleteNotes(req, res){
     }
 
     // Delete the note from MongoDB
-    await Notes.findByIdAndDelete(req.params.id);
+    await Notes.findOneAndDelete({ _id: req.params.id, userId: req.user._id });
     res.redirect("/myNotes")
 }
 
