@@ -196,7 +196,7 @@ async function deleteNotes(req, res) {
     // const notes = await Notes.findOneAndDelete({id: req.params._id})  // 👉 Delete notes only from app but not from cloudinary which don't free up cloudinary space even if user deletes its notes.
 
     // 👇 Delete notes from cloudinary also which free up space every time user delete it's notes    
-    const note = await Notes.findOne({ _id: req.params.id, userId: req.user._id }); // find the note by MongoDB _id
+    const note = await Notes.findOne({ _id: req.params.id, user: req.user._id }); // find the note by MongoDB _id
     if (!note) return res.redirect("/myNotes");
 
     // Delete all images of this note from Cloudinary
