@@ -74,9 +74,10 @@ async function friendsPage(req, res) {
 
 // User's all notes Page
 async function usersAllNotes(req, res) {
+    const loggedInUser = await User.findOne({ email: req.user.email })
     const notes = await Notes.find({ user: req.params.id })
     const user = await User.findById(req.params.id)
-    return res.render("usersAllNotes", { notes, user })
+    return res.render("usersAllNotes", { notes, user, loggedInUser })
 }
 
 // Profile
