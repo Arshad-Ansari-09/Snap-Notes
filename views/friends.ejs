@@ -1,26 +1,34 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <link rel="icon" type="image/x-icon" href="/favicon.png">
+    <link rel="icon" type="image/x-icon" href="/favicon.png" />
     <title>Snap Notes</title>
-    <meta name="description" content="Snap Notes — The best way for students to easily upload, share, and download handwritten notes. Keep things in order, and get to your study materials whenever you want. Quick, safe, and totally free.">
-</head>
-<body class="bg-stone-300 overflow-hidden">
+    <meta
+      name="description"
+      content="Snap Notes — The best way for students to easily upload, share, and download handwritten notes. Keep things in order, and get to your study materials whenever you want. Quick, safe, and totally free."
+    />
+  </head>
+  <body class="bg-stone-300 overflow-hidden">
+    <%- include("./partials/navBar") %>
 
-  <%- include("./partials/navBar") %>
-
-    <div class='flex flex-col md:flex-row justify-between px-2 md:px-6'>
-
+    <div class="flex flex-col md:flex-row justify-between px-2 md:px-6">
       <!-- Friends Profile -->
-       <div id="friendsContainer" class="flex flex-col h-[90vh] w-full md:w-[470px] scrollbar-hide overflow-auto md:block">
+      <div
+        id="friendsContainer"
+        class="flex flex-col h-[90vh] w-full md:w-[470px] scrollbar-hide overflow-auto md:block"
+      >
         <% friends.reverse().forEach(friend => { %>
-         <a href="/friend/<%= friend._id %>/notes" class="mt-4 inline-block" onclick="showNotes(event)">
+        <a
+          href="/friend/<%= friend._id %>/notes"
+          class="mt-4 inline-block"
+          onclick="showNotes(event)"
+        >
           <div
-            class="scrollbar-hide border-black h-18  md:w-74 sm:w-[90vw] items-center px-4 py-2 mt-2 flex gap-4 rounded-lg bg-stone-300 shadow-md/40 overflow-auto <%= user && user._id.toString() === friend._id.toString() ? 'md:border-2 border-blue-500' : 'md:border-black' %>"
+            class="scrollbar-hide border border-black h-18 md:w-74 sm:w-[90vw] items-center px-4 py-2 mt-2 flex gap-4 rounded-lg bg-stone-300 shadow-md/40 overflow-auto <%= user && user._id.toString() === friend._id.toString() ? 'md:border-2 border-blue-500' : 'md:border-black' %>"
           >
             <div class="h-full w-12 rounded">
               <img
@@ -35,410 +43,500 @@
           </div>
         </a>
         <a href="/delete/friend/<%= friend._id %>">
-          <svg class="hover:fill-red-700 cursor-pointer inline" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000"><path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z"/></svg>
+          <svg
+            class="hover:fill-red-700 cursor-pointer inline"
+            xmlns="http://www.w3.org/2000/svg"
+            height="24px"
+            viewBox="0 -960 960 960"
+            width="24px"
+            fill="#000000"
+          >
+            <path
+              d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z"
+            />
+          </svg>
         </a>
-       <% }) %>
-       </div>
+        <% }) %>
+      </div>
 
-        <div id="notesContainer" class="hidden md:block h-[90vh] w-full md:w-[550px] lg:w-[750px] xl:w-full pl-2 md:pl-6 py-2 overflow-auto scrollbar-hide">
-           <% if (user) { %>
+      <div
+        id="notesContainer"
+        class="hidden md:block h-[90vh] w-full md:w-[550px] lg:w-[750px] xl:w-full pl-2 md:pl-6 py-2 overflow-auto scrollbar-hide"
+      >
+        <% if (user) { %>
 
-            <h1 class="text-2xl font-semibold mb-2"><%= user.username %>'s notes</h1>
-            <button onclick="goBackToFriends()" class="md:hidden mb-2 px-4 py-1 bg-blue-500 text-white rounded">
-               ⬅ Back to Friends
-             </button>
+        <h1 class="text-2xl font-semibold mb-2">
+          <%= user.username %>'s notes
+        </h1>
+        <button
+          onclick="goBackToFriends()"
+          class="md:hidden mb-2 px-4 py-1 bg-blue-500 text-white rounded cursor-pointer"
+        >
+          ⬅ Back to Friends
+        </button>
 
-            <!-- Filter NavBar -->
-             <nav class="h-[50px] w-full bg-stone-100 shadow-md/20 mb-4 flex py-2 px-4 items-center rounded">
-               <label class="mx-4 hidden sm:inline-block">Sort By: </label>
-       
-               <div class="space-x-2 sm:space-x-4 flex">
-                 <select
-                   name=""
-                   id="class-filter"
-                   class="border-1 border-black rounded py-2"
-                 >
-                   <option value="Class" class="flex items-center justify-center">
-                     Class
-                   </option>
-                   <option value="BCA" class="flex items-center justify-center">
-                     BCA
-                   </option>
-                   <option value="MCA" class="flex items-center justify-center">
-                     MCA
-                   </option>
-                   <option value="B.Com" class="flex items-center justify-center">
-                     B.Com
-                   </option>
-                   <option value="M.Com" class="flex items-center justify-center">
-                     M.Com
-                   </option>
-                   <option value="B.Tech" class="flex items-center justify-center">
-                     B.Tech
-                   </option>
-                   <option value="M.Tech" class="flex items-center justify-center">
-                     M.Tech
-                   </option>
-                   <option value="12th" class="flex items-center justify-center">
-                     12th
-                   </option>
-                   <option value="11th" class="flex items-center justify-center">
-                     11th
-                   </option>
-                   <option value="10th" class="flex items-center justify-center">
-                     10th
-                   </option>
-                   <option value="9th" class="flex items-center justify-center">
-                     9th
-                   </option>
-                 </select>
-       
-                 <select
-                   name=""
-                   id="sem-filter"
-                   class="border-1 border-black rounded"
-                 >
-                   <option value="Sem" class="flex items-center justify-center">
-                     Sem
-                   </option>
-                   <option value="1st" class="flex items-center justify-center">
-                     1st
-                   </option>
-                   <option value="2nd" class="flex items-center justify-center">
-                     2nd
-                   </option>
-                   <option value="3rd" class="flex items-center justify-center">
-                     3rd
-                   </option>
-                   <option value="4th" class="flex items-center justify-center">
-                     4th
-                   </option>
-                   <option value="5th" class="flex items-center justify-center">
-                     5th
-                   </option>
-                   <option value="6th" class="flex items-center justify-center">
-                     6th
-                   </option>
-                   <option value="7th" class="flex items-center justify-center">
-                     7th
-                   </option>
-                   <option value="8th" class="flex items-center justify-center">
-                     8th
-                   </option>
-                 </select>
+        <!-- Filter NavBar -->
+        <nav
+          class="h-[50px] w-full bg-stone-100 shadow-md/20 mb-4 flex py-2 px-4 items-center rounded"
+        >
+          <label class="mx-4 hidden sm:inline-block">Sort By: </label>
 
-                 <input
-                    type="text"
-                    id="nameInput"
-                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[150px] sm:w-[200px] p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    placeholder="Search by name or notes info"
-                  />
+          <div class="space-x-2 sm:space-x-4 flex">
+            <select
+              name=""
+              id="class-filter"
+              class="border-1 border-black rounded py-2"
+            >
+              <option value="Class" class="flex items-center justify-center">
+                Class
+              </option>
+              <option value="BCA" class="flex items-center justify-center">
+                BCA
+              </option>
+              <option value="MCA" class="flex items-center justify-center">
+                MCA
+              </option>
+              <option value="B.Com" class="flex items-center justify-center">
+                B.Com
+              </option>
+              <option value="M.Com" class="flex items-center justify-center">
+                M.Com
+              </option>
+              <option value="B.Tech" class="flex items-center justify-center">
+                B.Tech
+              </option>
+              <option value="M.Tech" class="flex items-center justify-center">
+                M.Tech
+              </option>
+              <option value="12th" class="flex items-center justify-center">
+                12th
+              </option>
+              <option value="11th" class="flex items-center justify-center">
+                11th
+              </option>
+              <option value="10th" class="flex items-center justify-center">
+                10th
+              </option>
+              <option value="9th" class="flex items-center justify-center">
+                9th
+              </option>
+            </select>
 
-               </div>
-             </nav>
+            <select
+              name=""
+              id="sem-filter"
+              class="border-1 border-black rounded"
+            >
+              <option value="Sem" class="flex items-center justify-center">
+                Sem
+              </option>
+              <option value="1st" class="flex items-center justify-center">
+                1st
+              </option>
+              <option value="2nd" class="flex items-center justify-center">
+                2nd
+              </option>
+              <option value="3rd" class="flex items-center justify-center">
+                3rd
+              </option>
+              <option value="4th" class="flex items-center justify-center">
+                4th
+              </option>
+              <option value="5th" class="flex items-center justify-center">
+                5th
+              </option>
+              <option value="6th" class="flex items-center justify-center">
+                6th
+              </option>
+              <option value="7th" class="flex items-center justify-center">
+                7th
+              </option>
+              <option value="8th" class="flex items-center justify-center">
+                8th
+              </option>
+            </select>
 
-             <!-- User's Notes -->
-             <div class="flex flex-wrap gap-2 justify-around">
-              <% user.posts.reverse().forEach(post => { %>
-              
-            <div class="note-card border-1 border-stone-700 h-[250px] w-60 overflow-hidden rounded shadow-md/20 px-4 py-2 mb-2 scrollbar-hide hover:shadow-xl/20 transition">
-              <div class="relative">
-            <img class="preview-img h-44 w-full rounded object-cover cursor-pointer" src="<%= post.notesImages[0] %>" alt="" data-images="<%= JSON.stringify(post.notesImages) %>"/>
-            <button class="download-pdf-btn absolute top-1 right-1 bg-white p-1 rounded-full shadow hover:bg-gray-100 transition hover:cursor-pointer" 
-                data-images='<%= JSON.stringify(post.notesImages) %>' 
+            <input
+              type="text"
+              id="nameInput"
+              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[160px] sm:w-[200px] p-2 bg-gray-700 dark:bg-gray-700 border-gray-600 dark:border-gray-600 placeholder-gray-400 dark:placeholder-gray-400 text-white dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              placeholder="Search by name or notes info"
+            />
+          </div>
+        </nav>
+
+        <!-- User's Notes -->
+        <div class="flex flex-wrap gap-2 justify-around">
+          <% user.posts.reverse().forEach(post => { %>
+
+          <div
+            class="note-card border-1 border-stone-700 h-[250px] w-60 overflow-hidden rounded shadow-md/20 px-4 py-2 mb-2 scrollbar-hide hover:shadow-xl/20 transition"
+          >
+            <div class="relative">
+              <img
+                class="preview-img h-44 w-full rounded object-cover cursor-pointer"
+                src="<%= post.notesImages[0] %>"
+                alt=""
+                data-images="<%= JSON.stringify(post.notesImages) %>"
+              />
+              <button
+                class="download-pdf-btn absolute top-1 right-1 bg-white p-1 rounded-full shadow hover:bg-gray-100 transition hover:cursor-pointer"
+                data-images="<%= JSON.stringify(post.notesImages) %>"
                 data-classname="<%= post.classname %>"
                 data-info="<%= post.notesInfo %>"
-                title="Download Options">
-
+                title="Download Options"
+              >
                 <span class="btn-icon">
-                  <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000">
-                    <path d="M480-320 280-520l56-58 104 104v-326h80v326l104-104 56 58-200 200ZM240-160q-33 0-56.5-23.5T160-240v-120h80v120h480v-120h80v120q0 33-23.5 56.5T720-160H240Z"/>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    height="24px"
+                    viewBox="0 -960 960 960"
+                    width="24px"
+                    fill="#000000"
+                  >
+                    <path
+                      d="M480-320 280-520l56-58 104 104v-326h80v326l104-104 56 58-200 200ZM240-160q-33 0-56.5-23.5T160-240v-120h80v120h480v-120h80v120q0 33-23.5 56.5T720-160H240Z"
+                    />
                   </svg>
                 </span>
 
-              <!-- Spinner (hidden by default) -->
-              <span class="btn-spinner hidden">
-                <svg class="animate-spin h-5 w-5 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
-                </svg>
-              </span>
-            </button>
-            <div class="download-menu absolute top-10 right-0 bg-stone-200 border border-gray-300 rounded-md shadow-lg hidden flex-col z-50">
-              <button class="download-as-pdf flex gap-2 px-3 py-2 w-40 bg-stone-200 hover:bg-stone-100 cursor-pointer">Download as PDF 📄</button>
-              <button class="download-as-images flex gap-2 px-3 py-2 w-40 bg-stone-200 hover:bg-stone-100 cursor-pointer">Download as Images 🖼️</button>
+                <!-- Spinner (hidden by default) -->
+                <span class="btn-spinner hidden">
+                  <svg
+                    class="animate-spin h-5 w-5 text-blue-600"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      class="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      stroke-width="4"
+                    ></circle>
+                    <path
+                      class="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+                    ></path>
+                  </svg>
+                </span>
+              </button>
+              <div
+                class="download-menu absolute top-10 right-0 bg-stone-200 border border-gray-300 rounded-md shadow-lg hidden flex-col z-50"
+              >
+                <button
+                  class="download-as-pdf flex gap-2 px-3 py-2 w-40 bg-stone-200 hover:bg-stone-100 cursor-pointer"
+                >
+                  Download as PDF 📄
+                </button>
+                <button
+                  class="download-as-images flex gap-2 px-3 py-2 w-40 bg-stone-200 hover:bg-stone-100 cursor-pointer"
+                >
+                  Download as Images 🖼️
+                </button>
+              </div>
             </div>
-            </div>
-            <h1 class="className"><span  class="font-semibold">Class name:</span> <%= post.classname %></h1>
-            <h1 class="notesInfo"><span class="font-semibold">Notes Info:</span> <%= post.notesInfo %> </h1>
+            <h1 class="className">
+              <span class="font-semibold">Class name:</span> <%= post.classname
+              %>
+            </h1>
+            <h1 class="notesInfo">
+              <span class="font-semibold">Notes Info:</span> <%= post.notesInfo
+              %>
+            </h1>
           </div>
-             <% }) %>
-             </div>
-           <% } else { %>
-            <h1 class="text-center text-4xl">Nothing to see here.</h1>
-            <% } %>
+          <% }) %>
         </div>
-
+        <% } else { %>
+        <h1 class="text-center text-4xl">Nothing to see here.</h1>
+        <% } %>
+      </div>
     </div>
-    
 
     <style>
-      .scrollbar-hide::-webkit-scrollbar{
+      .scrollbar-hide::-webkit-scrollbar {
         display: none;
       }
       .overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0,0,0,0.9);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      z-index: 1000;
-    }
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.9);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+      }
 
-   .overlay img {
-      max-width: 80%;
-      max-height: 80%;
-      border-radius: 8px;
-   }
+      .overlay img {
+        max-width: 80%;
+        max-height: 80%;
+        border-radius: 8px;
+      }
 
-   .nav-btn {
-      position: absolute;
-      top: 50%;
-      transform: translateY(-50%);
-      font-size: 2rem;
-      color: white;
-      background: rgba(0,0,0,0.5);
-      border: none;
-      padding: 10px 15px;
-      cursor: pointer;
-      border-radius: 50%;
-   }
-   
-   #prevBtn { left: 20px; }
-   #nextBtn { right: 20px; }
+      .nav-btn {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 2rem;
+        color: white;
+        background: rgba(0, 0, 0, 0.5);
+        border: none;
+        padding: 10px 15px;
+        cursor: pointer;
+        border-radius: 50%;
+      }
 
+      #prevBtn {
+        left: 20px;
+      }
+      #nextBtn {
+        right: 20px;
+      }
     </style>
 
     <script>
-      const classFilter = document.getElementById("class-filter")
-      const semFilter = document.getElementById("sem-filter")
+      const classFilter = document.getElementById("class-filter");
+      const semFilter = document.getElementById("sem-filter");
       const container = document.querySelectorAll(".note-card"); // each card
-      const nameInput = document.getElementById("nameInput")
+      const nameInput = document.getElementById("nameInput");
 
-    classFilter.addEventListener("change", (e) => {
-      container.forEach((box) => {
-        const className = box.querySelector(".className")
-        if (
-          className.textContent.toLowerCase().replace(/[\W_]/g, '').includes(e.target.value.toLowerCase().replace(/[\W_]/g, '')) &&
-          (semFilter.value.toLowerCase() === "sem" || className.textContent.toLowerCase().replace(/[\W_]/g, '').includes(semFilter.value.toLowerCase().replace(/[\W_]/g, '')))
-        ) {
-          box.style.display = "block"
-        } else {
-          box.style.display = "none"
-        }
-      })
-    });
-
-    semFilter.addEventListener("change", (e) => {
-      container.forEach((box) => {
-        const className = box.querySelector(".className")
-        if (
-          (classFilter.value.toLowerCase() === "class" || className.textContent.toLowerCase().replace(/[\W_]/g, '').includes(classFilter.value.toLowerCase().replace(/[\W_]/g, ''))) &&
-          (e.target.value.toLowerCase() === "sem" || className.textContent.toLowerCase().replace(/[\W_]/g, '').includes(e.target.value.toLowerCase().replace(/[\W_]/g, '')))
-        ) {
-          box.style.display = "block"
-        } else {
-          box.style.display = "none"
-        }
-      })
-    });
-
-    nameInput.addEventListener("input",()=>{
-      container.forEach((box)=>{
-        const username = box.querySelector(".userName")
-        const notesInfo = box.querySelector(".notesInfo")
-        if (!notesInfo) return;
-        if(
-          notesInfo.textContent.toLowerCase().replace(/[\W_]/g, '').includes(nameInput.value.toLowerCase().replace(/[\W_]/g, ''))
-        ) {
-          box.style.display = "block"
-        } else{
-          box.style.display = "none"
-        }
-      })
-    });
-
-
-    // ====== Handle Image Preview =======
-   document.querySelectorAll(".preview-img").forEach(img => {
-    img.addEventListener("click", () => {
-    const images = JSON.parse(img.dataset.images);
-    let currentIndex = 0;
-
-    // Create overlay
-    const overlay = document.createElement("div");
-    overlay.classList.add("overlay");
-
-    // Image element
-    const displayImg = document.createElement("img");
-    displayImg.src = images[currentIndex];
-    overlay.appendChild(displayImg);
-
-    // Navigation buttons
-    const prevBtn = document.createElement("button");
-    prevBtn.id = "prevBtn";
-    prevBtn.classList.add("nav-btn");
-    prevBtn.innerHTML = "&#10094;"; // Left arrow
-    overlay.appendChild(prevBtn);
-
-    const nextBtn = document.createElement("button");
-    nextBtn.id = "nextBtn";
-    nextBtn.classList.add("nav-btn");
-    nextBtn.innerHTML = "&#10095;"; // Right arrow
-    overlay.appendChild(nextBtn);
-
-    // Show previous image
-    prevBtn.addEventListener("click", (e) => {
-      e.stopPropagation();
-      currentIndex = (currentIndex - 1 + images.length) % images.length;
-      displayImg.src = images[currentIndex];
-    });
-
-    // Show next image
-    nextBtn.addEventListener("click", (e) => {
-      e.stopPropagation();
-      currentIndex = (currentIndex + 1) % images.length;
-      displayImg.src = images[currentIndex];
-    });
-
-    // Keyboard support
-    const keyHandler = (e) => {
-      if (e.key === "ArrowLeft") prevBtn.click();
-      if (e.key === "ArrowRight") nextBtn.click();
-      if (e.key === "Escape") closeOverlay();
-    };
-    document.addEventListener("keydown", keyHandler);
-
-    // Close overlay
-    const closeOverlay = () => {
-      overlay.remove();
-      document.removeEventListener("keydown", keyHandler);
-    };
-
-    overlay.addEventListener("click", closeOverlay);
-
-    document.body.appendChild(overlay);
-  });
-});
-
-// Logic for Image download as PDF
-document.querySelectorAll('.download-pdf-btn').forEach(btn => {
-  const menu = btn.parentElement.querySelector('.download-menu');
-  const icon = btn.querySelector(".btn-icon");
-  const spinner = btn.querySelector(".btn-spinner");
-
-  // Toggle dropdown menu on button click
-  btn.addEventListener('click', () => {
-    menu.classList.toggle('hidden');
-  });
-
-  document.addEventListener("click", (e) => {
-    if (!btn.contains(e.target) && !menu.contains(e.target)) {
-      menu.classList.add("hidden");
-    }
-  })
-
-  // Handle PDF download
-  menu.querySelector('.download-as-pdf').addEventListener('click', async () => {
-    menu.classList.add("hidden");
-    icon.classList.add("hidden");
-    spinner.classList.remove("hidden");
-
-    const { jsPDF } = window.jspdf;
-    const pdf = new jsPDF();
-    const images = JSON.parse(btn.dataset.images);
-
-    const classname = btn.dataset.classname || "Notes";
-    const info = btn.dataset.info || "User";
-    const filename = `${classname}-${info}.pdf`.replace(/\s+/g, "_");
-
-    for (let i = 0; i < images.length; i++) {
-      const response = await fetch(images[i]);
-      const blob = await response.blob();
-      const imgData = await new Promise(resolve => {
-        const reader = new FileReader();
-        reader.onloadend = () => resolve(reader.result);
-        reader.readAsDataURL(blob);
+      classFilter.addEventListener("change", (e) => {
+        container.forEach((box) => {
+          const className = box.querySelector(".className");
+          if (
+            className.textContent
+              .toLowerCase()
+              .replace(/[\W_]/g, "")
+              .includes(e.target.value.toLowerCase().replace(/[\W_]/g, "")) &&
+            (semFilter.value.toLowerCase() === "sem" ||
+              className.textContent
+                .toLowerCase()
+                .replace(/[\W_]/g, "")
+                .includes(semFilter.value.toLowerCase().replace(/[\W_]/g, "")))
+          ) {
+            box.style.display = "block";
+          } else {
+            box.style.display = "none";
+          }
+        });
       });
 
-      const pageWidth = pdf.internal.pageSize.getWidth();
-      const pageHeight = pdf.internal.pageSize.getHeight();
-      pdf.addImage(imgData, 'JPEG', 0, 0, pageWidth, pageHeight);
+      semFilter.addEventListener("change", (e) => {
+        container.forEach((box) => {
+          const className = box.querySelector(".className");
+          if (
+            (classFilter.value.toLowerCase() === "class" ||
+              className.textContent
+                .toLowerCase()
+                .replace(/[\W_]/g, "")
+                .includes(
+                  classFilter.value.toLowerCase().replace(/[\W_]/g, "")
+                )) &&
+            (e.target.value.toLowerCase() === "sem" ||
+              className.textContent
+                .toLowerCase()
+                .replace(/[\W_]/g, "")
+                .includes(e.target.value.toLowerCase().replace(/[\W_]/g, "")))
+          ) {
+            box.style.display = "block";
+          } else {
+            box.style.display = "none";
+          }
+        });
+      });
 
-      if (i < images.length - 1) pdf.addPage();
-    }
+      nameInput.addEventListener("input", () => {
+        container.forEach((box) => {
+          const username = box.querySelector(".userName");
+          const notesInfo = box.querySelector(".notesInfo");
+          if (!notesInfo) return;
+          if (
+            notesInfo.textContent
+              .toLowerCase()
+              .replace(/[\W_]/g, "")
+              .includes(nameInput.value.toLowerCase().replace(/[\W_]/g, ""))
+          ) {
+            box.style.display = "block";
+          } else {
+            box.style.display = "none";
+          }
+        });
+      });
 
-    pdf.save(filename);
+      // ====== Handle Image Preview =======
+      document.querySelectorAll(".preview-img").forEach((img) => {
+        img.addEventListener("click", () => {
+          const images = JSON.parse(img.dataset.images);
+          let currentIndex = 0;
 
-    spinner.classList.add("hidden");
-    icon.classList.remove("hidden");
-    
-  });
+          // Create overlay
+          const overlay = document.createElement("div");
+          overlay.classList.add("overlay");
 
-  // Handle Images download
-  menu.querySelector('.download-as-images').addEventListener('click', () => {
-     menu.classList.add("hidden");
-    const images = JSON.parse(btn.dataset.images);
-    const classname = btn.dataset.classname || "Notes";
+          // Image element
+          const displayImg = document.createElement("img");
+          displayImg.src = images[currentIndex];
+          overlay.appendChild(displayImg);
 
-    icon.classList.add("hidden");
-    spinner.classList.remove("hidden");
+          // Navigation buttons
+          const prevBtn = document.createElement("button");
+          prevBtn.id = "prevBtn";
+          prevBtn.classList.add("nav-btn");
+          prevBtn.innerHTML = "&#10094;"; // Left arrow
+          overlay.appendChild(prevBtn);
 
-    images.forEach((imgUrl, index) => {
-      const link = document.createElement("a");
-      link.href = imgUrl;
-      link.download = `${classname}-${index + 1}.jpg`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    });
+          const nextBtn = document.createElement("button");
+          nextBtn.id = "nextBtn";
+          nextBtn.classList.add("nav-btn");
+          nextBtn.innerHTML = "&#10095;"; // Right arrow
+          overlay.appendChild(nextBtn);
 
-    spinner.classList.add("hidden");
-    icon.classList.remove("hidden");
-   
-  });
-});
+          // Show previous image
+          prevBtn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            currentIndex = (currentIndex - 1 + images.length) % images.length;
+            displayImg.src = images[currentIndex];
+          });
 
-// Handle mobile reload state
-window.addEventListener("DOMContentLoaded", () => {
-  if (window.innerWidth < 768 && localStorage.getItem("showNotes") === "true") {
-    document.getElementById("friendsContainer").classList.add("hidden");
-    document.getElementById("notesContainer").classList.remove("hidden");
-    localStorage.removeItem("showNotes");
-  }
-});
+          // Show next image
+          nextBtn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            currentIndex = (currentIndex + 1) % images.length;
+            displayImg.src = images[currentIndex];
+          });
 
+          // Keyboard support
+          const keyHandler = (e) => {
+            if (e.key === "ArrowLeft") prevBtn.click();
+            if (e.key === "ArrowRight") nextBtn.click();
+            if (e.key === "Escape") closeOverlay();
+          };
+          document.addEventListener("keydown", keyHandler);
 
-function showNotes(e) {
-  if (window.innerWidth < 768) {
-    e.preventDefault();
-    localStorage.setItem("showNotes", "true"); // Set flag to show notes after reload
-    const href = e.currentTarget.getAttribute("href");
-    window.location.href = href; // Navigate normally (no reload)
-  }
-}
+          // Close overlay
+          const closeOverlay = () => {
+            overlay.remove();
+            document.removeEventListener("keydown", keyHandler);
+          };
 
+          overlay.addEventListener("click", closeOverlay);
 
-  function goBackToFriends() {
-    document.getElementById("notesContainer").classList.add("hidden");
-    document.getElementById("friendsContainer").classList.remove("hidden");
-    window.history.pushState({}, '', '/friends'); // or your main route
-  }
+          document.body.appendChild(overlay);
+        });
+      });
+
+      // Logic for Image download as PDF
+      document.querySelectorAll(".download-pdf-btn").forEach((btn) => {
+        const menu = btn.parentElement.querySelector(".download-menu");
+        const icon = btn.querySelector(".btn-icon");
+        const spinner = btn.querySelector(".btn-spinner");
+
+        // Toggle dropdown menu on button click
+        btn.addEventListener("click", () => {
+          menu.classList.toggle("hidden");
+        });
+
+        document.addEventListener("click", (e) => {
+          if (!btn.contains(e.target) && !menu.contains(e.target)) {
+            menu.classList.add("hidden");
+          }
+        });
+
+        // Handle PDF download
+        menu
+          .querySelector(".download-as-pdf")
+          .addEventListener("click", async () => {
+            menu.classList.add("hidden");
+            icon.classList.add("hidden");
+            spinner.classList.remove("hidden");
+
+            const { jsPDF } = window.jspdf;
+            const pdf = new jsPDF();
+            const images = JSON.parse(btn.dataset.images);
+
+            const classname = btn.dataset.classname || "Notes";
+            const info = btn.dataset.info || "User";
+            const filename = `${classname}-${info}.pdf`.replace(/\s+/g, "_");
+
+            for (let i = 0; i < images.length; i++) {
+              const response = await fetch(images[i]);
+              const blob = await response.blob();
+              const imgData = await new Promise((resolve) => {
+                const reader = new FileReader();
+                reader.onloadend = () => resolve(reader.result);
+                reader.readAsDataURL(blob);
+              });
+
+              const pageWidth = pdf.internal.pageSize.getWidth();
+              const pageHeight = pdf.internal.pageSize.getHeight();
+              pdf.addImage(imgData, "JPEG", 0, 0, pageWidth, pageHeight);
+
+              if (i < images.length - 1) pdf.addPage();
+            }
+
+            pdf.save(filename);
+
+            spinner.classList.add("hidden");
+            icon.classList.remove("hidden");
+          });
+
+        // Handle Images download
+        menu
+          .querySelector(".download-as-images")
+          .addEventListener("click", () => {
+            menu.classList.add("hidden");
+            const images = JSON.parse(btn.dataset.images);
+            const classname = btn.dataset.classname || "Notes";
+
+            icon.classList.add("hidden");
+            spinner.classList.remove("hidden");
+
+            images.forEach((imgUrl, index) => {
+              const link = document.createElement("a");
+              link.href = imgUrl;
+              link.download = `${classname}-${index + 1}.jpg`;
+              document.body.appendChild(link);
+              link.click();
+              document.body.removeChild(link);
+            });
+
+            spinner.classList.add("hidden");
+            icon.classList.remove("hidden");
+          });
+      });
+
+      // Handle mobile reload state
+      window.addEventListener("DOMContentLoaded", () => {
+        if (
+          window.innerWidth < 768 &&
+          localStorage.getItem("showNotes") === "true"
+        ) {
+          document.getElementById("friendsContainer").classList.add("hidden");
+          document.getElementById("notesContainer").classList.remove("hidden");
+          localStorage.removeItem("showNotes");
+        }
+      });
+
+      function showNotes(e) {
+        if (window.innerWidth < 768) {
+          e.preventDefault();
+          localStorage.setItem("showNotes", "true"); // Set flag to show notes after reload
+          const href = e.currentTarget.getAttribute("href");
+          window.location.href = href; // Navigate normally (no reload)
+        }
+      }
+
+      function goBackToFriends() {
+        document.getElementById("notesContainer").classList.add("hidden");
+        document.getElementById("friendsContainer").classList.remove("hidden");
+        window.history.pushState({}, "", "/friends"); // or your main route
+      }
     </script>
-
-</body>
+  </body>
 </html>
