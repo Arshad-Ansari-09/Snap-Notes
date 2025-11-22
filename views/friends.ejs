@@ -17,7 +17,8 @@
 
     <div class="flex flex-col md:flex-row justify-between px-2 md:px-6">
       <!-- Friends Profile -->
-      <div
+      <% if (friends.length>0) { %>
+        <div
         id="friendsContainer"
         class="flex flex-col h-[90vh] w-full md:w-[470px] scrollbar-hide overflow-auto md:block"
       >
@@ -239,11 +240,11 @@
                 </button>
               </div>
             </div>
-            <h1 class="className">
+            <h1 class="className line-clamp-1">
               <span class="font-semibold">Class name:</span> <%= post.classname
               %>
             </h1>
-            <h1 class="notesInfo">
+            <h1 class="notesInfo line-clamp-1">
               <span class="font-semibold">Notes Info:</span> <%= post.notesInfo
               %>
             </h1>
@@ -254,6 +255,9 @@
         <h1 class="text-center text-4xl">Nothing to see here.</h1>
         <% } %>
       </div>
+      <% } else { %>
+        <h1 class="text-center text-4xl w-full mt-10">No friends yet.</h1>
+        <% } %>
     </div>
 
     <style>
@@ -292,12 +296,8 @@
         border-radius: 50%;
       }
 
-      #prevBtn {
-        left: 20px;
-      }
-      #nextBtn {
-        right: 20px;
-      }
+      #prevBtn { left: 20px; background-color: azure; color: black; }
+      #nextBtn { right: 20px; background-color: azure; color: black; } 
     </style>
 
     <script>
@@ -397,19 +397,49 @@
           nextBtn.innerHTML = "&#10095;"; // Right arrow
           overlay.appendChild(nextBtn);
 
-          // Show previous image
-          prevBtn.addEventListener("click", (e) => {
-            e.stopPropagation();
-            currentIndex = (currentIndex - 1 + images.length) % images.length;
-            displayImg.src = images[currentIndex];
-          });
-
           // Show next image
           nextBtn.addEventListener("click", (e) => {
-            e.stopPropagation();
-            currentIndex = (currentIndex + 1) % images.length;
-            displayImg.src = images[currentIndex];
-          });
+    e.stopPropagation();
+    currentIndex = (currentIndex + 1) % images.length;
+    displayImg.src = images[currentIndex];
+    
+    // ⭐ NEW: Start preloading the image that comes AFTER the next one
+    const preloadIndex = (currentIndex + 1) % images.length;
+    preloadImage(images[preloadIndex]); 
+});
+
+// Show previous image
+prevBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    currentIndex = (currentIndex - 1 + images.length) % images.length;
+    displayImg.src = images[currentIndex];
+    
+    // ⭐ NEW: Start preloading the image that comes BEFORE the previous one
+    const preloadIndex = (currentIndex - 1 + images.length) % images.length;
+    preloadImage(images[preloadIndex]);
+});
+
+
+// ⭐ NEW FUNCTION: Function to handle the actual preloading
+const preloadImage = (url) => {
+    // 1. Check if the image is already in the cache (optional but good practice)
+    if (!preloadImage.cache) preloadImage.cache = {};
+    if (preloadImage.cache[url]) return;
+
+    // 2. Create a temporary Image object
+    const img = new Image();
+    img.onload = () => {
+        // Image loaded successfully, now it's in the browser cache!
+        preloadImage.cache[url] = true;
+    };
+    img.onerror = () => {
+        // Handle error if needed
+        preloadImage.cache[url] = false;
+    };
+    
+    // 3. Set the source to start downloading the file in the background
+    img.src = url;
+};
 
           // Keyboard support
           const keyHandler = (e) => {

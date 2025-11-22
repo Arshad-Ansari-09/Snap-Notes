@@ -28,8 +28,8 @@
         />
         <div class="flex justify-between">
         <div class="noteDetail">
-         <h1><span class="font-semibold">Class name: </span><%= note.classname %></h1>
-        <h1>
+         <h1 class="line-clamp-1"><span class="font-semibold">Class name: </span><%= note.classname %></h1>
+        <h1 class="line-clamp-1">
           <span class="font-semibold">Notes info:</span> <%= note.notesInfo %>
         </h1>
         <h1>
@@ -65,6 +65,10 @@
     </div>
 
     <style>
+      .scrollbar-hide::-webkit-scrollbar {
+      display: none;
+    }
+    
   .overlay {
     position: fixed;
     top:0; left:0;
@@ -78,19 +82,22 @@
   .overlay img {
     max-width: 90%;
     max-height: 80%;
+    border-radius: 8px;
   }
   .nav-btn {
-    position: absolute;
-    top: 50%;
-    font-size: 2rem;
-    background: transparent;
-    border: none;
-    color: white;
-    cursor: pointer;
-    user-select: none;
-  }
-  #prevBtn { left: 10px; }
-  #nextBtn { right: 10px; }
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 2rem;
+      color: white;
+      background: rgba(0,0,0,0.5);
+      border: none;
+      padding: 10px 15px;
+      cursor: pointer;
+      border-radius: 50%;
+   }
+  #prevBtn { left: 20px; background-color: azure; color: black; }
+  #nextBtn { right: 20px; background-color: azure; color: black; }
     </style>
 
 <script>
@@ -138,19 +145,50 @@
     nextBtn.innerHTML = "&#10095;"; // Right arrow
     overlay.appendChild(nextBtn);
 
-    // Show previous image
-    prevBtn.addEventListener("click", (e) => {
-      e.stopPropagation();
-      currentIndex = (currentIndex - 1 + images.length) % images.length;
-      displayImg.src = images[currentIndex];
-    });
 
     // Show next image
     nextBtn.addEventListener("click", (e) => {
-      e.stopPropagation();
-      currentIndex = (currentIndex + 1) % images.length;
-      displayImg.src = images[currentIndex];
-    });
+    e.stopPropagation();
+    currentIndex = (currentIndex + 1) % images.length;
+    displayImg.src = images[currentIndex];
+    
+    // ⭐ NEW: Start preloading the image that comes AFTER the next one
+    const preloadIndex = (currentIndex + 1) % images.length;
+    preloadImage(images[preloadIndex]); 
+});
+
+// Show previous image
+prevBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    currentIndex = (currentIndex - 1 + images.length) % images.length;
+    displayImg.src = images[currentIndex];
+    
+    // ⭐ NEW: Start preloading the image that comes BEFORE the previous one
+    const preloadIndex = (currentIndex - 1 + images.length) % images.length;
+    preloadImage(images[preloadIndex]);
+});
+
+
+// ⭐ NEW FUNCTION: Function to handle the actual preloading
+const preloadImage = (url) => {
+    // 1. Check if the image is already in the cache (optional but good practice)
+    if (!preloadImage.cache) preloadImage.cache = {};
+    if (preloadImage.cache[url]) return;
+
+    // 2. Create a temporary Image object
+    const img = new Image();
+    img.onload = () => {
+        // Image loaded successfully, now it's in the browser cache!
+        preloadImage.cache[url] = true;
+    };
+    img.onerror = () => {
+        // Handle error if needed
+        preloadImage.cache[url] = false;
+    };
+    
+    // 3. Set the source to start downloading the file in the background
+    img.src = url;
+};
 
     // Keyboard support
     const keyHandler = (e) => {

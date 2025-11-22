@@ -135,8 +135,8 @@
               <button class="download-as-images flex gap-2 px-3 py-2 w-40 bg-stone-200 hover:bg-stone-100 cursor-pointer">Download as Images 🖼️</button>
             </div>
             </div>
-            <h1 class="className"><span  class="font-semibold">Class name:</span> <%= note.classname %></h1>
-            <h1 class="notesInfo"><span class="font-semibold">Notes Info:</span> <%= note.notesInfo %> </h1>
+            <h1 class="className line-clamp-1"><span  class="font-semibold">Class name:</span> <%= note.classname %></h1>
+            <h1 class="notesInfo line-clamp-1"><span class="font-semibold">Notes Info:</span> <%= note.notesInfo %> </h1>
             <h1 class="userName"><span class="font-semibold">By:</span> <%= note.user.username %></h1>
             <div class="flex justify-between items-center">
               <% if (note.user._id.toString() !== loggedInUser._id.toString() && !loggedInUser.friends.map(id => id._id.toString()).includes(note.user._id.toString())) { %>
@@ -279,20 +279,50 @@
     nextBtn.innerHTML = "&#10095;"; // Right arrow
     overlay.appendChild(nextBtn);
 
-    // Show previous image
-    prevBtn.addEventListener("click", (e) => {
-      e.stopPropagation();
-      currentIndex = (currentIndex - 1 + images.length) % images.length;
-      displayImg.src = images[currentIndex];
-    });
-
+    
     // Show next image
     nextBtn.addEventListener("click", (e) => {
-      e.stopPropagation();
-      currentIndex = (currentIndex + 1) % images.length;
-      displayImg.src = images[currentIndex];
-    });
+    e.stopPropagation();
+    currentIndex = (currentIndex + 1) % images.length;
+    displayImg.src = images[currentIndex];
+    
+    // ⭐ NEW: Start preloading the image that comes AFTER the next one
+    const preloadIndex = (currentIndex + 1) % images.length;
+    preloadImage(images[preloadIndex]); 
+});
 
+// Show previous image
+prevBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    currentIndex = (currentIndex - 1 + images.length) % images.length;
+    displayImg.src = images[currentIndex];
+    
+    // ⭐ NEW: Start preloading the image that comes BEFORE the previous one
+    const preloadIndex = (currentIndex - 1 + images.length) % images.length;
+    preloadImage(images[preloadIndex]);
+});
+
+
+// ⭐ NEW FUNCTION: Function to handle the actual preloading
+const preloadImage = (url) => {
+    // 1. Check if the image is already in the cache (optional but good practice)
+    if (!preloadImage.cache) preloadImage.cache = {};
+    if (preloadImage.cache[url]) return;
+
+    // 2. Create a temporary Image object
+    const img = new Image();
+    img.onload = () => {
+        // Image loaded successfully, now it's in the browser cache!
+        preloadImage.cache[url] = true;
+    };
+    img.onerror = () => {
+        // Handle error if needed
+        preloadImage.cache[url] = false;
+    };
+    
+    // 3. Set the source to start downloading the file in the background
+    img.src = url;
+};
     // Keyboard support
     const keyHandler = (e) => {
       if (e.key === "ArrowLeft") prevBtn.click();
