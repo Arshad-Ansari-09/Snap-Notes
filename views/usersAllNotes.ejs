@@ -150,6 +150,45 @@
     .scrollbar-hide::-webkit-scrollbar {
       display: none;
     }
+
+    /* ✅ Image loading skeleton */
+.image-loader {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%); /* Perfectly center */
+  width: 60%;
+  height: 60%;
+  background: linear-gradient(90deg, #444 25%, #555 37%, #444 63%);
+  background-size: 400% 100%;
+  animation: shimmer 1.4s ease infinite;
+  border-radius: 10px;
+}
+
+@keyframes shimmer {
+  0% { background-position: -400px 0; }
+  100% { background-position: 400px 0; }
+}
+
+.overlay img {
+  transition: opacity 0.25s ease-in-out;
+}
+
+
+.image-counter {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: white;
+  font-size: 1rem;
+  font-weight: bold;
+  background: rgba(0,0,0,0.5);
+  padding: 5px 12px;
+  border-radius: 12px;
+  z-index: 1010;
+}
+
     .overlay {
       position: fixed;
       top: 0;
@@ -246,14 +285,41 @@
     const images = JSON.parse(img.dataset.images);
     let currentIndex = 0;
 
+    // ✅ Preload ALL images immediately
+    images.forEach(src => {
+      const preload = new Image();
+      preload.src = src;
+    });
+
     // Create overlay
     const overlay = document.createElement("div");
     overlay.classList.add("overlay");
 
-    // Image element
-    const displayImg = document.createElement("img");
-    displayImg.src = images[currentIndex];
-    overlay.appendChild(displayImg);
+    const counter = document.createElement("div");
+counter.className = "image-counter";
+counter.textContent = `${currentIndex + 1} / ${images.length}`; // e.g., 1 / 8
+overlay.appendChild(counter);
+
+const showImage = (index) => {
+  displayImg.src = images[index];
+  counter.textContent = `${index + 1} / ${images.length}`;
+};
+
+
+    // ✅ Loader skeleton
+const loader = document.createElement("div");
+loader.className = "image-loader";
+overlay.appendChild(loader);
+
+// ✅ Actual Image
+const displayImg = document.createElement("img");
+displayImg.style.opacity = "0";
+displayImg.onload = () => {
+  loader.remove();
+  displayImg.style.opacity = "1";
+};
+displayImg.src = images[currentIndex];
+overlay.appendChild(displayImg);
 
     // Navigation buttons
     const prevBtn = document.createElement("button");
@@ -268,19 +334,113 @@
     nextBtn.innerHTML = "&#10095;"; // Right arrow
     overlay.appendChild(nextBtn);
 
-    // Show previous image
-    prevBtn.addEventListener("click", (e) => {
-      e.stopPropagation();
-      currentIndex = (currentIndex - 1 + images.length) % images.length;
-      displayImg.src = images[currentIndex];
-    });
-
     // Show next image
     nextBtn.addEventListener("click", (e) => {
-      e.stopPropagation();
-      currentIndex = (currentIndex + 1) % images.length;
-      displayImg.src = images[currentIndex];
-    });
+      let touchStartX = 0;
+let touchEndX = 0;
+
+overlay.addEventListener("touchstart", (e) => {
+  touchStartX = e.changedTouches[0].screenX;
+}, false);
+
+overlay.addEventListener("touchend", (e) => {
+  touchEndX = e.changedTouches[0].screenX;
+  handleSwipe();
+}, false);
+
+function handleSwipe() {
+  const swipeDistance = touchEndX - touchStartX;
+
+  if (swipeDistance > 60) {
+    // ✅ Swipe Right → Previous Image
+    prevBtn.click();
+  }
+
+  if (swipeDistance < -60) {
+    // ✅ Swipe Left → Next Image
+    nextBtn.click();
+  }
+}
+
+    e.stopPropagation();
+    currentIndex = (currentIndex + 1) % images.length;
+    showImage(currentIndex);
+    displayImg.style.opacity = "0";
+
+setTimeout(() => {
+  displayImg.src = images[currentIndex];
+}, 80);
+
+    
+    // ⭐ NEW: Start preloading the image that comes AFTER the next one
+    const preloadIndex = (currentIndex + 1) % images.length;
+    preloadImage(images[preloadIndex]); 
+});
+
+// Show previous image
+prevBtn.addEventListener("click", (e) => {
+  let touchStartX = 0;
+let touchEndX = 0;
+
+overlay.addEventListener("touchstart", (e) => {
+  touchStartX = e.changedTouches[0].screenX;
+}, false);
+
+overlay.addEventListener("touchend", (e) => {
+  touchEndX = e.changedTouches[0].screenX;
+  handleSwipe();
+}, false);
+
+function handleSwipe() {
+  const swipeDistance = touchEndX - touchStartX;
+
+  if (swipeDistance > 60) {
+    // ✅ Swipe Right → Previous Image
+    prevBtn.click();
+  }
+
+  if (swipeDistance < -60) {
+    // ✅ Swipe Left → Next Image
+    nextBtn.click();
+  }
+}
+
+    e.stopPropagation();
+    currentIndex = (currentIndex - 1 + images.length) % images.length;
+    showImage(currentIndex);
+    displayImg.style.opacity = "0";
+
+setTimeout(() => {
+  displayImg.src = images[currentIndex];
+}, 80);
+
+    
+    // ⭐ NEW: Start preloading the image that comes BEFORE the previous one
+    const preloadIndex = (currentIndex - 1 + images.length) % images.length;
+    preloadImage(images[preloadIndex]);
+});
+
+
+// ⭐ NEW FUNCTION: Function to handle the actual preloading
+const preloadImage = (url) => {
+    // 1. Check if the image is already in the cache (optional but good practice)
+    if (!preloadImage.cache) preloadImage.cache = {};
+    if (preloadImage.cache[url]) return;
+
+    // 2. Create a temporary Image object
+    const img = new Image();
+    img.onload = () => {
+        // Image loaded successfully, now it's in the browser cache!
+        preloadImage.cache[url] = true;
+    };
+    img.onerror = () => {
+        // Handle error if needed
+        preloadImage.cache[url] = false;
+    };
+    
+    // 3. Set the source to start downloading the file in the background
+    img.src = url;
+};
 
     // Keyboard support
     const keyHandler = (e) => {
