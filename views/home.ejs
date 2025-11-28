@@ -257,6 +257,13 @@
     const images = JSON.parse(img.dataset.images);
     let currentIndex = 0;
 
+    // ✅ Preload ALL images immediately
+    images.forEach(src => {
+      const preload = new Image();
+      preload.src = src;
+    });
+
+
     // Create overlay
     const overlay = document.createElement("div");
     overlay.classList.add("overlay");
