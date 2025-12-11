@@ -124,11 +124,13 @@
 
               <!-- Spinner (hidden by default) -->
               <span class="btn-spinner hidden">
-                <svg class="animate-spin h-5 w-5 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <svg class="animate-spin h-5 w-5 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                   <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
-                </svg>
-              </span>
+                 </svg>
+               </span>
+             
+             <span class="btn-progress-text text-sm font-semibold hidden ml-2"></span> 
             </button>
             <div class="download-menu absolute top-10 right-0 bg-stone-200 border border-gray-300 rounded-md shadow-lg hidden flex-col z-50">
               <button class="download-as-pdf flex gap-2 px-3 py-2 w-40 bg-stone-200 hover:bg-stone-100 cursor-pointer">Download as PDF 📄</button>
@@ -480,57 +482,118 @@ const preloadImage = (url) => {
 
 // Logic for Image download as PDF
 document.querySelectorAll('.download-pdf-btn').forEach(btn => {
-  const menu = btn.parentElement.querySelector('.download-menu');
-  const icon = btn.querySelector(".btn-icon");
-  const spinner = btn.querySelector(".btn-spinner");
+    // Get the necessary child and sibling elements
+    const menu = btn.parentElement.querySelector('.download-menu');
+    const icon = btn.querySelector(".btn-icon");
+    const spinner = btn.querySelector(".btn-spinner");
+    // FIX 1: Correctly select the progress text element INSIDE the button
+    const progressText = btn.querySelector(".btn-progress-text"); 
 
-  // Toggle dropdown menu on button click
-  btn.addEventListener('click', () => {
-    menu.classList.toggle('hidden');
-  });
+    // Toggle dropdown menu on button click (This is essential for the menu to appear)
+    btn.addEventListener('click', (e) => {
+        e.stopPropagation(); // Prevents the click from immediately triggering the window-wide close handler
+        menu.classList.toggle('hidden');
+    });
 
-  document.addEventListener("click", (e) => {
-    if (!btn.contains(e.target) && !menu.contains(e.target)) {
-      menu.classList.add("hidden");
-    }
-  })
+    // Close menu when clicking outside
+    document.addEventListener("click", (e) => {
+        if (!btn.contains(e.target) && !menu.contains(e.target)) {
+            menu.classList.add("hidden");
+        }
+    })
 
-  // Handle PDF download
-  menu.querySelector('.download-as-pdf').addEventListener('click', async () => {
-    menu.classList.add("hidden");
-    icon.classList.add("hidden");
-    spinner.classList.remove("hidden");
+    // Handle PDF download
+    menu.querySelector('.download-as-pdf').addEventListener('click', async (e) => {
+        e.stopPropagation(); // Stop click from propagating up and immediately re-hiding the menu
+        
+        menu.classList.add("hidden");
+        icon.classList.add("hidden");
+        spinner.classList.remove("hidden");
+        progressText.classList.remove("hidden"); 
 
-    const { jsPDF } = window.jspdf;
-    const pdf = new jsPDF();
-    const images = JSON.parse(btn.dataset.images);
+        const { jsPDF } = window.jspdf;
+        // Setting PDF to 'l' (landscape) or checking image size might be needed for larger images
+        const pdf = new jsPDF(); 
+        const images = JSON.parse(btn.dataset.images);
+        const totalImages = images.length;
 
-    const classname = btn.dataset.classname || "Notes";
-    const info = btn.dataset.info || "User";
-    const filename = `${classname}-${info}.pdf`.replace(/\s+/g, "_");
+        const classname = btn.dataset.classname || "Notes";
+        const info = btn.dataset.info || "User";
+        const filename = `${classname}-${info}.pdf`.replace(/\s+/g, "_");
 
-    for (let i = 0; i < images.length; i++) {
-      const response = await fetch(images[i]);
-      const blob = await response.blob();
-      const imgData = await new Promise(resolve => {
-        const reader = new FileReader();
-        reader.onloadend = () => resolve(reader.result);
-        reader.readAsDataURL(blob);
-      });
+        let currentImageCount = 0;
+        
+        // --- PHASE 1: Fetching Images (Concurrent Download) ---
+        
+        const fetchImageWithProgress = async (url, index) => {
+            progressText.textContent = `Fetching ${index + 1}/${totalImages}`;
+            const response = await fetch(url);
+            return response.blob();
+        };
+        
+        const fetchPromises = images.map((url, index) => fetchImageWithProgress(url, index));
+        const blobs = await Promise.all(fetchPromises);
 
-      const pageWidth = pdf.internal.pageSize.getWidth();
-      const pageHeight = pdf.internal.pageSize.getHeight();
-      pdf.addImage(imgData, 'JPEG', 0, 0, pageWidth, pageHeight);
+        // --- PHASE 2: Processing Images & Generating PDF ---
 
-      if (i < images.length - 1) pdf.addPage();
-    }
+        progressText.textContent = `Processing 0/${totalImages} Images`;
+        currentImageCount = 0;
+        
+        for (let i = 0; i < blobs.length; i++) {
+            const blob = blobs[i];
+            
+            // Convert blob to Data URL
+            const imgData = await new Promise(resolve => {
+                const reader = new FileReader();
+                reader.onloadend = () => resolve(reader.result);
+                reader.readAsDataURL(blob);
+            });
+            
+            // 🎯 ASPECT RATIO CALCULATION FIX (from previous step) 🎯
+            const imgDimensions = await new Promise(resolve => {
+                const img = new Image();
+                img.onload = () => resolve({ width: img.naturalWidth, height: img.naturalHeight });
+                img.src = imgData; 
+            });
 
-    pdf.save(filename);
+            const pdfWidth = pdf.internal.pageSize.getWidth();
+            const pdfHeight = pdf.internal.pageSize.getHeight();
+            
+            const imgAspect = imgDimensions.width / imgDimensions.height;
+            const pdfAspect = pdfWidth / pdfHeight;
 
-    spinner.classList.add("hidden");
-    icon.classList.remove("hidden");
-    
-  });
+            let finalWidth, finalHeight;
+            let xPos = 0, yPos = 0;
+            
+            if (imgAspect > pdfAspect) {
+                // Image is wider (landscape or wide portrait) than the page
+                finalWidth = pdfWidth;
+                finalHeight = pdfWidth / imgAspect;
+                yPos = (pdfHeight - finalHeight) / 2; // Center vertically
+            } else {
+                // Image is taller (portrait or square) than the page
+                finalHeight = pdfHeight;
+                finalWidth = pdfHeight * imgAspect;
+                xPos = (pdfWidth - finalWidth) / 2; // Center horizontally
+            }
+            // ----------------------------------------------------
+
+            // Update processing progress
+            currentImageCount = i + 1;
+            progressText.textContent = `Processing ${currentImageCount}/${totalImages} Images`;
+
+            pdf.addImage(imgData, 'JPEG', xPos, yPos, finalWidth, finalHeight, null, 'NONE', 0, { quality: 1.0 });
+
+            if (i < totalImages - 1) pdf.addPage();
+        }
+
+        pdf.save(filename);
+
+        // Hide all indicators upon completion
+        spinner.classList.add("hidden");
+        icon.classList.remove("hidden");
+        progressText.classList.add("hidden"); 
+    });
 
   // Handle Images download
   menu.querySelector('.download-as-images').addEventListener('click', async () => {
