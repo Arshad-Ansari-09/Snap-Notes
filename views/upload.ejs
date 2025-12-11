@@ -77,5 +77,107 @@
   </div>
 </form>
 
+<script src="https://cdn.jsdelivr.net/npm/compressorjs@1.2.1/dist/compressor.min.js"></script>
+<script>
+    // Get the form and file input elements
+const form = document.querySelector('form');
+const fileInput = document.querySelector('input[name="notesImages"]');
+const submitButton = form.querySelector('button[type="submit"]');
+
+// ----------------------------------------------------
+// 1. Intercept the Form Submission
+// ----------------------------------------------------
+form.addEventListener('submit', async function(e) {
+    e.preventDefault(); // <-- STOP the default browser submission
+
+    // Disable button and show loading state
+    submitButton.textContent = 'Compressing & Uploading...';
+    submitButton.disabled = true;
+
+    const originalFiles = Array.from(fileInput.files);
+    
+    if (originalFiles.length === 0) {
+        alert("Please select files to upload.");
+        resetFormState();
+        return;
+    }
+
+    try {
+        // 2. Process Files (Compression/Resizing)
+        const compressedFiles = await compressAllFiles(originalFiles);
+
+        // 3. Build New FormData and Submit via Fetch
+        await submitCompressedData(compressedFiles);
+
+    } catch (error) {
+        console.error("Upload failed:", error);
+        alert("An error occurred during upload or compression.");
+        resetFormState();
+    }
+});
+
+function resetFormState() {
+    submitButton.textContent = 'Upload';
+    submitButton.disabled = false;
+}
+
+
+// ----------------------------------------------------
+// 2. Compression Helper Function (Using Compressor.js)
+// ----------------------------------------------------
+function compressAllFiles(files) {
+    const compressionPromises = files.map(file => {
+        return new Promise((resolve, reject) => {
+            new Compressor(file, {
+                quality: 0.7,   // Compress to 70% quality (major size reduction)
+                maxWidth: 1400, // Limit width to 1400px (good for handwritten notes)
+                mimeType: 'image/jpeg', // Force output format for consistency
+                convertSize: Infinity, // Apply compression to all files
+                success(result) {
+                    // result is the compressed File object
+                    resolve(result);
+                },
+                error(err) {
+                    console.error('Compression failed for a file:', err.message);
+                    reject(err);
+                },
+            });
+        });
+    });
+    // Wait for all files to be compressed concurrently
+    return Promise.all(compressionPromises);
+}
+
+
+// ----------------------------------------------------
+// 3. Submission Helper Function (Fetch API)
+// ----------------------------------------------------
+async function submitCompressedData(files) {
+    const formData = new FormData();
+    
+    // Append the text fields (classname, notesInfo)
+    formData.append('classname', form.elements.classname.value);
+    formData.append('notesInfo', form.elements.notesInfo.value);
+    
+    // Append the COMPRESSED files
+    files.forEach(file => {
+        // The name "notesImages" MUST match the name expected by your Multer middleware
+        formData.append('notesImages', file, file.name); 
+    });
+
+    // Send the data using Fetch API
+    const response = await fetch(form.action, {
+        method: 'POST',
+        body: formData, // Send the compressed data
+    });
+
+    if (response.ok) {
+        // Assuming your server responds with a redirect or a JSON success message
+        window.location.href = '/'; // Manually redirect to the homepage
+    } else {
+        throw new Error(`Server returned status: ${response.status}`);
+    }
+}
+</script>
   </body>
 </html>
