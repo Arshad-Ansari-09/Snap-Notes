@@ -3,181 +3,709 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="icon" type="image/x-icon" href="/favicon.png">
-    <title>Snap Notes</title>
-    <meta name="description" content="Snap Notes — The best way for students to easily upload, share, and download handwritten notes. Keep things in order, and get to your study materials whenever you want. Quick, safe, and totally free.">
+    <link rel="icon" type="image/x-icon" href="/favicon.png" />
+    <title>Snap Notes — Upload</title>
+    <meta
+      name="description"
+      content="Snap Notes — Upload handwritten notes to share with friends."
+    />
+
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+
+    <!-- Poppins + Lucide (home-like) -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+      :root {
+        --bg: #050816;
+        --bg-alt: #020617;
+        --primary: #6366f1;
+        --primary-soft: rgba(99, 102, 241, 0.16);
+        --accent: #f97316;
+        --text-main: #e5e7eb;
+        --text-muted: #9ca3af;
+        --card-bg: rgba(15, 23, 42, 0.92);
+        --border-soft: rgba(148, 163, 184, 0.35);
+        --radius-lg: 18px;
+        --radius-full: 999px;
+        --shadow-soft: 0 18px 40px rgba(15, 23, 42, 0.55);
+        --transition-fast: 150ms ease;
+        --transition: 220ms ease;
+      }
+      [data-theme="light"] {
+        --bg: #f8fafc;
+        --bg-alt: #ffffff;
+        --text-main: #0f172a;
+        --text-muted: #64748b;
+        --card-bg: #ffffff;
+        --border-soft: #e2e8f0;
+        --shadow-soft: 0 10px 30px rgba(0, 0, 0, 0.08);
+        --primary: #4f46e5;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Poppins", system-ui, -apple-system, BlinkMacSystemFont,
+          "Segoe UI", sans-serif;
+      }
+      html,
+      body {
+        overflow-x: hidden;
+      }
+      body {
+        min-height: 100vh;
+        color: var(--text-main);
+        background: radial-gradient(
+            circle at 0% 0%,
+            rgba(56, 189, 248, 0.16),
+            transparent 55%
+          ),
+          radial-gradient(
+            circle at 100% 100%,
+            rgba(244, 114, 182, 0.16),
+            transparent 55%
+          ),
+          radial-gradient(
+            circle at 0% 100%,
+            rgba(129, 140, 248, 0.18),
+            transparent 55%
+          ),
+          radial-gradient(
+            circle at 100% 0%,
+            rgba(45, 212, 191, 0.12),
+            transparent 55%
+          ),
+          linear-gradient(135deg, #020617, #020617);
+        transition: background var(--transition), color var(--transition);
+      }
+      [data-theme="light"] body {
+        background: #f1f5f9;
+      }
+
+      /* Scrollbar */
+      ::-webkit-scrollbar {
+        width: 8px;
+      }
+      ::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: rgba(148, 163, 184, 0.45);
+        border-radius: 999px;
+      }
+
+      .shell {
+        max-width: 1180px;
+        margin: 0 auto;
+        padding: 0 1.5rem 3rem;
+      }
+
+      /* NAVBAR (same as home page) */
+      .navbar {
+        position: sticky;
+        top: 0;
+        z-index: 50;
+        backdrop-filter: blur(18px);
+        background: linear-gradient(
+          to bottom,
+          rgba(15, 23, 42, 0.95),
+          rgba(15, 23, 42, 0.88),
+          transparent
+        );
+        border-bottom: 1px solid rgba(148, 163, 184, 0.32);
+        margin-bottom: 1.2rem;
+        transition: background var(--transition), border-color var(--transition);
+      }
+      [data-theme="light"] .navbar {
+        background: rgba(255, 255, 255, 0.9);
+        border-bottom: 1px solid var(--border-soft);
+      }
+      .navbar-inner {
+        max-width: 1180px;
+        margin: 0 auto;
+        padding: 0.7rem 1.5rem 0.6rem;
+        display: flex;
+        align-items: center;
+        gap: 2rem;
+      }
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        white-space: nowrap;
+      }
+      .brand-logo {
+        width: 32px;
+        height: 32px;
+        border-radius: 12px;
+        background: conic-gradient(
+          from 190deg,
+          #4f46e5,
+          #22c55e,
+          #06b6d4,
+          #f97316,
+          #6366f1
+        );
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: 700;
+        font-size: 1.1rem;
+        box-shadow: 0 0 0 1px rgba(15, 23, 42, 0.9),
+          0 12px 25px rgba(56, 189, 248, 0.45);
+      }
+      .brand-title {
+        font-size: 1.2rem;
+        font-weight: 600;
+        letter-spacing: 0.04em;
+        background: linear-gradient(to right, #e5e7eb, #a5b4fc);
+        -webkit-background-clip: text;
+        color: transparent;
+      }
+      [data-theme="light"] .brand-title {
+        background: linear-gradient(to right, #1e293b, #4338ca);
+        -webkit-background-clip: text;
+      }
+      .brand-subtitle {
+        font-size: 0.7rem;
+        color: var(--text-muted);
+        letter-spacing: 0.09em;
+        text-transform: uppercase;
+      }
+      .nav-links {
+        display: flex;
+        align-items: center;
+        gap: 1.4rem;
+        font-size: 0.88rem;
+        flex: 1;
+      }
+      .nav-links a {
+        position: relative;
+        color: var(--text-muted);
+        text-decoration: none;
+        padding: 0.2rem 0;
+        transition: color var(--transition-fast);
+      }
+      .nav-links a::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        bottom: -0.3rem;
+        height: 2px;
+        border-radius: 999px;
+        width: 0%;
+        background: linear-gradient(to right, #6366f1, #22d3ee);
+        transition: width var(--transition-fast);
+      }
+      .nav-links a:hover {
+        color: var(--text-main);
+      }
+      .nav-links a:hover::after {
+        width: 100%;
+      }
+      .nav-links a.active {
+        color: var(--text-main);
+      }
+      .nav-links a.active::after {
+        width: 60%;
+      }
+
+      .nav-right {
+        display: flex;
+        align-items: center;
+        gap: 0.9rem;
+      }
+
+      .btn {
+        border-radius: var(--radius-full);
+        border: 1px solid rgba(148, 163, 184, 0.5);
+        padding: 0.35rem 0.9rem;
+        font-size: 0.8rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.28rem;
+        color: var(--text-main);
+        background: radial-gradient(
+            circle at 0 0,
+            rgba(59, 130, 246, 0.36),
+            transparent 55%
+          ),
+          rgba(15, 23, 42, 0.9);
+        cursor: pointer;
+        outline: none;
+        transition: background var(--transition),
+          transform var(--transition-fast), box-shadow var(--transition-fast),
+          border-color var(--transition-fast);
+        box-shadow: 0 10px 25px rgba(15, 23, 42, 0.7);
+        text-decoration: none;
+      }
+      [data-theme="light"] .btn {
+        background: #ffffff;
+        border-color: var(--border-soft);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        color: var(--text-main);
+      }
+      .btn:hover {
+        transform: translateY(-1px);
+        border-color: rgba(129, 140, 248, 0.9);
+      }
+      .btn-primary {
+        background: linear-gradient(135deg, #6366f1, #22d3ee);
+        border: none;
+        color: white !important;
+        box-shadow: 0 12px 30px rgba(56, 189, 248, 0.55);
+        font-weight: 600;
+      }
+
+      .theme-toggle {
+        width: 36px;
+        height: 36px;
+        border-radius: 999px;
+        border: 1px solid var(--border-soft);
+        background: var(--card-bg);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        color: var(--text-main);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        transition: all var(--transition-fast);
+      }
+      [data-theme="light"] .theme-toggle {
+        background: #ffffff;
+        border-color: var(--border-soft);
+        color: #f59e0b;
+      }
+      .theme-toggle:hover {
+        transform: rotate(20deg);
+        border-color: var(--primary);
+      }
+
+      .avatar {
+        width: 33px;
+        height: 33px;
+        border-radius: 999px;
+        border: 1px solid rgba(148, 163, 184, 0.8);
+        overflow: hidden;
+        box-shadow: 0 8px 18px rgba(15, 23, 42, 0.7);
+        cursor: pointer;
+      }
+      .avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+      }
+
+      /* Page */
+      .page-header {
+        display: flex;
+        flex-direction: column;
+        gap: 0.4rem;
+        margin-top: 0.8rem;
+        margin-bottom: 1.2rem;
+      }
+      .page-title {
+        font-size: 1.6rem;
+        font-weight: 600;
+        letter-spacing: 0.03em;
+      }
+      .page-subtitle {
+        font-size: 0.85rem;
+        color: var(--text-muted);
+      }
+
+      /* Upload card */
+      .card {
+        width: 100%;
+        max-width: 720px;
+        margin: 0 auto;
+        background: radial-gradient(
+            circle at 0 -10%,
+            rgba(56, 189, 248, 0.22),
+            transparent 58%
+          ),
+          radial-gradient(
+            circle at 100% 110%,
+            rgba(244, 114, 182, 0.18),
+            transparent 58%
+          ),
+          var(--card-bg);
+        border: 1px solid rgba(148, 163, 184, 0.42);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-soft);
+        overflow: hidden;
+      }
+      [data-theme="light"] .card {
+        background: #ffffff;
+        border-color: var(--border-soft);
+      }
+
+      .card-head {
+        padding: 1rem 1.1rem;
+        border-bottom: 1px solid rgba(148, 163, 184, 0.22);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.8rem;
+      }
+      [data-theme="light"] .card-head {
+        border-bottom: 1px solid var(--border-soft);
+      }
+
+      .head-left {
+        display: flex;
+        align-items: center;
+        gap: 0.7rem;
+        min-width: 0;
+      }
+      .chip {
+        width: 40px;
+        height: 40px;
+        border-radius: 14px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(99, 102, 241, 0.16);
+        border: 1px solid rgba(99, 102, 241, 0.35);
+      }
+
+      .card-title {
+        font-size: 1.05rem;
+        font-weight: 650;
+        line-height: 1.2;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .card-hint {
+        font-size: 0.82rem;
+        color: var(--text-muted);
+        margin-top: 0.2rem;
+      }
+
+      .card-body {
+        padding: 1.1rem;
+        display: grid;
+        gap: 1rem;
+      }
+
+      .field {
+        display: grid;
+        gap: 0.35rem;
+      }
+      .label {
+        font-size: 0.78rem;
+        color: var(--text-muted);
+        font-weight: 600;
+        letter-spacing: 0.02em;
+      }
+      .input {
+        width: 100%;
+        border-radius: 14px;
+        border: 1px solid rgba(148, 163, 184, 0.55);
+        background: rgba(15, 23, 42, 0.92);
+        color: var(--text-main);
+        padding: 0.62rem 0.75rem;
+        font-size: 0.9rem;
+        outline: none;
+      }
+      [data-theme="light"] .input {
+        background: #ffffff;
+        border-color: var(--border-soft);
+      }
+
+      .dropzone {
+        position: relative;
+        border-radius: var(--radius-lg);
+        border: 1.5px dashed rgba(148, 163, 184, 0.55);
+        background: rgba(15, 23, 42, 0.55);
+        padding: 1.25rem;
+        display: grid;
+        place-items: center;
+        gap: 0.55rem;
+        text-align: center;
+        overflow: hidden;
+      }
+      [data-theme="light"] .dropzone {
+        background: #ffffff;
+        border-color: var(--border-soft);
+      }
+      .file-input {
+        position: absolute;
+        inset: 0;
+        opacity: 0;
+        cursor: pointer;
+      }
+
+      .card-actions {
+        padding: 0 1.1rem 1.2rem;
+      }
+
+      .btn-upload {
+        width: 100%;
+        border-radius: var(--radius-full);
+        padding: 0.62rem 1rem;
+        background: linear-gradient(135deg, #6366f1, #22d3ee);
+        border: none;
+        color: white;
+        cursor: pointer;
+        font-weight: 650;
+        font-size: 0.92rem;
+        box-shadow: 0 12px 30px rgba(56, 189, 248, 0.35);
+      }
+      .btn-upload:disabled {
+        opacity: 0.7;
+        cursor: not-allowed;
+      }
+
+      @media (max-width: 768px) {
+        .navbar-inner {
+          padding-inline: 1.1rem;
+          gap: 1rem;
+        }
+        .nav-links {
+          display: none;
+        }
+      }
+    </style>
   </head>
+
   <body>
-    <%- include("./partials/navBar") %>
-    
-    <h1 class="text-center font-semibold text-2xl md:text-3xl mt-4 mb-4 underline">
-  Upload Your Notes Here
-</h1>
-
-<form action="" method="post" enctype="multipart/form-data" class="px-4">
-  <div class="max-w-xl mx-auto rounded-lg overflow-hidden">
-    <!-- Inputs -->
-    <div class="mt-4 space-y-4">
-      <div>
-        <label class="block font-medium">Class and Sem name</label>
-        <input 
-          type="text" 
-          name="classname" 
-          class="h-10 rounded w-full bg-stone-200 mt-1 border border-black px-3 block" 
-          placeholder="eg: BCA 2nd">
-      </div>
-
-      <div>
-        <label class="block font-medium">Notes Info</label>
-        <input 
-          type="text" 
-          name="notesInfo" 
-          class="h-10 rounded w-full bg-stone-200 mt-1 border border-black px-3 block" 
-          placeholder="eg: DBMS unit-1">
-      </div>
-    </div>
-
-    <!-- File Upload -->
-    <div class="w-full p-3">
-      <div
-        class="relative h-40 md:h-48 rounded-lg border-2 border-blue-500 bg-gray-100 flex justify-center items-center shadow-lg hover:shadow-xl transition-shadow duration-300 ease-in-out"
-      >
-        <div class="absolute flex flex-col items-center text-center px-2">
-          <img
-            alt="File Icon"
-            class="mb-2 w-12 h-12 md:w-16 md:h-16"
-            src="https://img.icons8.com/dusk/64/000000/file.png"
-          />
-          <span class="block text-gray-500 font-semibold text-sm md:text-base">
-            Drag &amp; drop your files here
-          </span>
-          <span class="block text-gray-400 font-normal text-xs md:text-sm mt-1">
-            or click to upload
-          </span>
+    <!-- ✅ Home page navbar links + upload button + theme toggle + avatar -->
+    <header class="navbar">
+      <div class="navbar-inner">
+        <div class="brand">
+          <div class="brand-logo">S</div>
+          <div>
+            <div class="brand-title">Snap Notes</div>
+            <div class="brand-subtitle">Smart notes library</div>
+          </div>
         </div>
 
-        <input
-          name="notesImages"
-          class="h-full w-full opacity-0 cursor-pointer"
-          type="file"
-          multiple
-        />
+        <nav class="nav-links">
+          <a href="/">Home</a>
+          <a href="/friends">Friends</a>
+          <a href="/mynotes">My Notes</a>
+          <a href="">Services</a>
+        </nav>
+
+        <div class="nav-right">
+          <!-- This page IS upload, so button links to this route -->
+          <a href="/upload/notes" class="btn btn-primary">
+            <i data-lucide="upload" style="width:14px;height:14px"></i>
+            Upload
+          </a>
+
+          <div class="theme-toggle" id="themeToggle" title="Toggle theme">
+            <i data-lucide="sun" style="width:18px;height:18px"></i>
+          </div>
+
+          <a class="avatar" href="/profile" title="Profile">
+            <img
+              src="<%= (typeof loggedInUser !== 'undefined' && loggedInUser.profileImg) ? loggedInUser.profileImg : (typeof currentUser !== 'undefined' && currentUser.profileImg) ? currentUser.profileImg : '/favicon.png' %>"
+              alt="Profile"
+            />
+          </a>
+        </div>
       </div>
-    </div>
+    </header>
 
-    <!-- Submit Button -->
-    <div class="flex justify-center mt-4 mb-6">
-      <button
-        type="submit"
-        class="bg-blue-600 px-6 py-2 rounded-md hover:bg-blue-700 text-white cursor-pointer w-full sm:w-auto"
-      >
-        Upload
-      </button>
-    </div>
-  </div>
-</form>
+    <main class="shell">
+      <section class="page-header">
+        <h1 class="page-title">Upload your notes</h1>
+        <p class="page-subtitle">
+          Add class/semester details and upload multiple images (pages).
+        </p>
+      </section>
 
-<script src="https://cdn.jsdelivr.net/npm/compressorjs@1.2.1/dist/compressor.min.js"></script>
-<script>
-    // Get the form and file input elements
-const form = document.querySelector('form');
-const fileInput = document.querySelector('input[name="notesImages"]');
-const submitButton = form.querySelector('button[type="submit"]');
+      <!-- ✅ Logic unchanged: same form, same names, same compressor/fetch logic -->
+      <form action="" method="post" enctype="multipart/form-data">
+        <div class="card">
+          <div class="card-head">
+            <div class="head-left">
+              <div class="chip" aria-hidden="true">
+                <i data-lucide="file-up" style="width: 18px; height: 18px"></i>
+              </div>
+              <div style="min-width:0;">
+                <div class="card-title">Upload Your Notes</div>
+                <div class="card-hint">
+                  Images will be compressed before uploading.
+                </div>
+              </div>
+            </div>
+          </div>
 
-// ----------------------------------------------------
-// 1. Intercept the Form Submission
-// ----------------------------------------------------
-form.addEventListener('submit', async function(e) {
-    e.preventDefault(); // <-- STOP the default browser submission
+          <div class="card-body">
+            <div class="field">
+              <label class="label">Class and Sem name</label>
+              <input
+                type="text"
+                name="classname"
+                class="input"
+                placeholder="eg: BCA 2nd"
+              />
+            </div>
 
-    // Disable button and show loading state
-    submitButton.textContent = 'Compressing & Uploading...';
-    submitButton.disabled = true;
+            <div class="field">
+              <label class="label">Notes Info</label>
+              <input
+                type="text"
+                name="notesInfo"
+                class="input"
+                placeholder="eg: DBMS unit-1"
+              />
+            </div>
 
-    const originalFiles = Array.from(fileInput.files);
-    
-    if (originalFiles.length === 0) {
-        alert("Please select files to upload.");
-        resetFormState();
-        return;
-    }
+            <div class="field">
+              <label class="label">Notes images</label>
+              <div class="dropzone">
+                <div class="chip" aria-hidden="true" style="width:52px;height:52px;border-radius:18px;">
+                  <i data-lucide="image" style="width:22px;height:22px"></i>
+                </div>
+                <div style="font-weight:650;">Drag & drop your files here</div>
+                <div style="font-size:0.82rem;color:var(--text-muted);">
+                  or click to upload (multiple allowed)
+                </div>
 
-    try {
-        // 2. Process Files (Compression/Resizing)
-        const compressedFiles = await compressAllFiles(originalFiles);
+                <input
+                  name="notesImages"
+                  class="file-input"
+                  type="file"
+                  multiple
+                />
+              </div>
+            </div>
+          </div>
 
-        // 3. Build New FormData and Submit via Fetch
-        await submitCompressedData(compressedFiles);
+          <div class="card-actions">
+            <button type="submit" class="btn-upload">Upload</button>
+          </div>
+        </div>
+      </form>
+    </main>
 
-    } catch (error) {
-        console.error("Upload failed:", error);
-        alert("An error occurred during upload or compression.");
-        resetFormState();
-    }
-});
+    <script src="https://cdn.jsdelivr.net/npm/compressorjs@1.2.1/dist/compressor.min.js"></script>
 
-function resetFormState() {
-    submitButton.textContent = 'Upload';
-    submitButton.disabled = false;
-}
+    <script>
+      // ✅ Logic unchanged (your original upload compression + fetch submit)
+      const form = document.querySelector("form");
+      const fileInput = document.querySelector('input[name="notesImages"]');
+      const submitButton = form.querySelector('button[type="submit"]');
 
+      form.addEventListener("submit", async function (e) {
+        e.preventDefault();
 
-// ----------------------------------------------------
-// 2. Compression Helper Function (Using Compressor.js)
-// ----------------------------------------------------
-function compressAllFiles(files) {
-    const compressionPromises = files.map(file => {
-        return new Promise((resolve, reject) => {
+        submitButton.textContent = "Compressing & Uploading...";
+        submitButton.disabled = true;
+
+        const originalFiles = Array.from(fileInput.files);
+
+        if (originalFiles.length === 0) {
+          alert("Please select files to upload.");
+          resetFormState();
+          return;
+        }
+
+        try {
+          const compressedFiles = await compressAllFiles(originalFiles);
+          await submitCompressedData(compressedFiles);
+        } catch (error) {
+          console.error("Upload failed:", error);
+          alert("An error occurred during upload or compression.");
+          resetFormState();
+        }
+      });
+
+      function resetFormState() {
+        submitButton.textContent = "Upload";
+        submitButton.disabled = false;
+      }
+
+      function compressAllFiles(files) {
+        const compressionPromises = files.map((file) => {
+          return new Promise((resolve, reject) => {
             new Compressor(file, {
-                quality: 0.7,   // Compress to 70% quality (major size reduction)
-                maxWidth: 1400, // Limit width to 1400px (good for handwritten notes)
-                mimeType: 'image/jpeg', // Force output format for consistency
-                convertSize: Infinity, // Apply compression to all files
-                success(result) {
-                    // result is the compressed File object
-                    resolve(result);
-                },
-                error(err) {
-                    console.error('Compression failed for a file:', err.message);
-                    reject(err);
-                },
+              quality: 0.7,
+              maxWidth: 1400,
+              mimeType: "image/jpeg",
+              convertSize: Infinity,
+              success(result) {
+                resolve(result);
+              },
+              error(err) {
+                console.error("Compression failed for a file:", err.message);
+                reject(err);
+              },
             });
+          });
         });
-    });
-    // Wait for all files to be compressed concurrently
-    return Promise.all(compressionPromises);
-}
+        return Promise.all(compressionPromises);
+      }
 
+      async function submitCompressedData(files) {
+        const formData = new FormData();
 
-// ----------------------------------------------------
-// 3. Submission Helper Function (Fetch API)
-// ----------------------------------------------------
-async function submitCompressedData(files) {
-    const formData = new FormData();
-    
-    // Append the text fields (classname, notesInfo)
-    formData.append('classname', form.elements.classname.value);
-    formData.append('notesInfo', form.elements.notesInfo.value);
-    
-    // Append the COMPRESSED files
-    files.forEach(file => {
-        // The name "notesImages" MUST match the name expected by your Multer middleware
-        formData.append('notesImages', file, file.name); 
-    });
+        formData.append("classname", form.elements.classname.value);
+        formData.append("notesInfo", form.elements.notesInfo.value);
 
-    // Send the data using Fetch API
-    const response = await fetch(form.action, {
-        method: 'POST',
-        body: formData, // Send the compressed data
-    });
+        files.forEach((file) => {
+          formData.append("notesImages", file, file.name);
+        });
 
-    if (response.ok) {
-        // Assuming your server responds with a redirect or a JSON success message
-        window.location.href = '/'; // Manually redirect to the homepage
-    } else {
-        throw new Error(`Server returned status: ${response.status}`);
-    }
-}
-</script>
+        const response = await fetch(form.action, {
+          method: "POST",
+          body: formData,
+        });
+
+        if (response.ok) {
+          window.location.href = "/";
+        } else {
+          throw new Error(`Server returned status: ${response.status}`);
+        }
+      }
+    </script>
+
+    <script>
+      // Theme toggle (same as home page)
+      const themeToggleBtn = document.getElementById("themeToggle");
+      const htmlElement = document.documentElement;
+
+      const setThemeIcon = (name) => {
+        themeToggleBtn.innerHTML = `<i data-lucide="${name}" style="width:18px;height:18px"></i>`;
+        lucide.createIcons();
+      };
+
+      const savedTheme = localStorage.getItem("theme");
+      if (savedTheme === "light") {
+        htmlElement.setAttribute("data-theme", "light");
+        setThemeIcon("moon");
+      } else {
+        htmlElement.removeAttribute("data-theme");
+        setThemeIcon("sun");
+      }
+
+      themeToggleBtn.addEventListener("click", () => {
+        const currentTheme = htmlElement.getAttribute("data-theme");
+        if (currentTheme === "light") {
+          htmlElement.removeAttribute("data-theme");
+          localStorage.setItem("theme", "dark");
+          setThemeIcon("sun");
+        } else {
+          htmlElement.setAttribute("data-theme", "light");
+          localStorage.setItem("theme", "light");
+          setThemeIcon("moon");
+        }
+      });
+
+      lucide.createIcons();
+    </script>
   </body>
 </html>

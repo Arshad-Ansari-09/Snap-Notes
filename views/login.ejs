@@ -1,102 +1,575 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <link rel="icon" type="image/x-icon" href="/favicon.png">
-    <title>Snap Notes</title>
-    <meta name="description" content="Snap Notes — The best way for students to easily upload, share, and download handwritten notes. Keep things in order, and get to your study materials whenever you want. Quick, safe, and totally free.">
-</head>
-<body class="bg-stone-300 px-4">
+    <link rel="icon" type="image/x-icon" href="/favicon.png" />
+    <title>Snap Notes — Login</title>
+    <meta
+      name="description"
+      content="Snap Notes — Login to your account to upload, share, and download handwritten notes."
+    />
 
-    <div>
-      <form action="" method="post">
-        <div class="relative py-3 sm:max-w-xs sm:mx-auto">
-          <div class="min-h-96 px-8 py-6 mt-4 text-left bg-gray-800 dark:bg-gray-800 rounded-xl shadow-lg">
-            <div class="flex flex-col justify-center items-center h-full select-none">
-              <div class="flex flex-col items-center justify-center gap-2 mb-8">
-                <div class="w-8 h-8 bg-gray-700" src=""></div>
-                <p class="m-0 text-[16px] font-semibold text-white dark:text-white">
-                  Login to your Account
-                </p>
-                <span class="m-0 text-xs max-w-[90%] text-center text-[#8B8E98]">
-                  Get started with our app, just login and enjoy
-                  experience.
-                </span>
-              </div>
-              <div class="w-full flex flex-col gap-2">
-                <label class="font-semibold text-xs text-gray-400">Email</label>
+    <!-- Poppins (same as home) -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Lucide icons (same as home) -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+      :root {
+        /* Dark Theme (Default) Variables */
+        --bg: #050816;
+        --bg-alt: #020617;
+        --primary: #6366f1;
+        --primary-soft: rgba(99, 102, 241, 0.16);
+        --accent: #f97316;
+        --text-main: #e5e7eb;
+        --text-muted: #9ca3af;
+        --card-bg: rgba(15, 23, 42, 0.92);
+        --border-soft: rgba(148, 163, 184, 0.35);
+        --radius-lg: 18px;
+        --radius-full: 999px;
+        --shadow-soft: 0 18px 40px rgba(15, 23, 42, 0.55);
+        --transition-fast: 150ms ease;
+        --transition: 220ms ease;
+      }
+
+      /* Light Theme Overrides */
+      [data-theme="light"] {
+        --bg: #f8fafc;
+        --bg-alt: #ffffff;
+        --text-main: #0f172a;
+        --text-muted: #64748b;
+        --card-bg: #ffffff;
+        --border-soft: #e2e8f0;
+        --shadow-soft: 0 10px 30px rgba(0, 0, 0, 0.08);
+        --primary: #4f46e5;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Poppins", system-ui, -apple-system, BlinkMacSystemFont,
+          "Segoe UI", sans-serif;
+      }
+
+      html,
+      body {
+        overflow-x: hidden;
+      }
+
+      body {
+        min-height: 100vh;
+        color: var(--text-main);
+        background: radial-gradient(
+            circle at 0% 0%,
+            rgba(56, 189, 248, 0.16),
+            transparent 55%
+          ),
+          radial-gradient(
+            circle at 100% 100%,
+            rgba(244, 114, 182, 0.16),
+            transparent 55%
+          ),
+          radial-gradient(
+            circle at 0% 100%,
+            rgba(129, 140, 248, 0.18),
+            transparent 55%
+          ),
+          radial-gradient(
+            circle at 100% 0%,
+            rgba(45, 212, 191, 0.12),
+            transparent 55%
+          ),
+          linear-gradient(135deg, #020617, #020617);
+        transition: background var(--transition), color var(--transition);
+      }
+
+      [data-theme="light"] body {
+        background: #f1f5f9;
+      }
+
+      ::selection {
+        background: rgba(129, 140, 248, 0.4);
+        color: white;
+      }
+
+      /* Scrollbar */
+      ::-webkit-scrollbar {
+        width: 8px;
+      }
+      ::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: rgba(148, 163, 184, 0.45);
+        border-radius: 999px;
+      }
+
+      .shell {
+        max-width: 1180px;
+        margin: 0 auto;
+        padding: 0 1.5rem 3rem;
+      }
+
+      /* Navbar (home-like) */
+      .navbar {
+        position: sticky;
+        top: 0;
+        z-index: 50;
+        backdrop-filter: blur(18px);
+        background: linear-gradient(
+          to bottom,
+          rgba(15, 23, 42, 0.95),
+          rgba(15, 23, 42, 0.88),
+          transparent
+        );
+        border-bottom: 1px solid rgba(148, 163, 184, 0.32);
+        margin-bottom: 1.2rem;
+      }
+      [data-theme="light"] .navbar {
+        background: rgba(255, 255, 255, 0.9);
+        border-bottom: 1px solid var(--border-soft);
+      }
+
+      .navbar-inner {
+        max-width: 1180px;
+        margin: 0 auto;
+        padding: 0.7rem 1.5rem 0.6rem;
+        display: flex;
+        align-items: center;
+        gap: 2rem;
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        white-space: nowrap;
+      }
+
+      .brand-logo {
+        width: 32px;
+        height: 32px;
+        border-radius: 12px;
+        background: conic-gradient(
+          from 190deg,
+          #4f46e5,
+          #22c55e,
+          #06b6d4,
+          #f97316,
+          #6366f1
+        );
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: 700;
+        font-size: 1.1rem;
+        box-shadow: 0 0 0 1px rgba(15, 23, 42, 0.9),
+          0 12px 25px rgba(56, 189, 248, 0.45);
+      }
+
+      .brand-title {
+        font-size: 1.2rem;
+        font-weight: 600;
+        letter-spacing: 0.04em;
+        background: linear-gradient(to right, #e5e7eb, #a5b4fc);
+        -webkit-background-clip: text;
+        color: transparent;
+      }
+      [data-theme="light"] .brand-title {
+        background: linear-gradient(to right, #1e293b, #4338ca);
+        -webkit-background-clip: text;
+      }
+
+      .brand-subtitle {
+        font-size: 0.7rem;
+        color: var(--text-muted);
+        letter-spacing: 0.09em;
+        text-transform: uppercase;
+      }
+
+      .nav-right {
+        margin-left: auto;
+        display: flex;
+        align-items: center;
+        gap: 0.9rem;
+      }
+
+      .theme-toggle {
+        width: 36px;
+        height: 36px;
+        border-radius: 999px;
+        border: 1px solid var(--border-soft);
+        background: var(--card-bg);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        color: var(--text-main);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        transition: all var(--transition-fast);
+      }
+      [data-theme="light"] .theme-toggle {
+        background: #ffffff;
+        border-color: var(--border-soft);
+        color: #f59e0b;
+      }
+      .theme-toggle:hover {
+        transform: rotate(20deg);
+        border-color: var(--primary);
+      }
+
+      /* Auth layout */
+      .auth-wrap {
+        display: grid;
+        grid-template-columns: 1fr;
+        place-items: center;
+        padding: 2rem 0;
+      }
+
+      .auth-card {
+        width: 100%;
+        max-width: 440px;
+        background: radial-gradient(
+            circle at 0 -10%,
+            rgba(56, 189, 248, 0.22),
+            transparent 58%
+          ),
+          radial-gradient(
+            circle at 100% 110%,
+            rgba(244, 114, 182, 0.18),
+            transparent 58%
+          ),
+          var(--card-bg);
+        border: 1px solid rgba(148, 163, 184, 0.42);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-soft);
+        overflow: hidden;
+      }
+
+      [data-theme="light"] .auth-card {
+        background: #ffffff;
+        border-color: var(--border-soft);
+      }
+
+      .auth-head {
+        padding: 1.1rem 1.1rem 0.9rem;
+        border-bottom: 1px solid rgba(148, 163, 184, 0.22);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.8rem;
+      }
+
+      [data-theme="light"] .auth-head {
+        border-bottom: 1px solid var(--border-soft);
+      }
+
+      .auth-title {
+        display: flex;
+        flex-direction: column;
+        gap: 0.2rem;
+        min-width: 0;
+      }
+
+      .auth-title h1 {
+        font-size: 1.15rem;
+        font-weight: 650;
+        letter-spacing: 0.02em;
+      }
+
+      .auth-title p {
+        font-size: 0.82rem;
+        color: var(--text-muted);
+        line-height: 1.35;
+      }
+
+      .auth-badge {
+        width: 40px;
+        height: 40px;
+        border-radius: 14px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(99, 102, 241, 0.16);
+        border: 1px solid rgba(99, 102, 241, 0.35);
+      }
+      [data-theme="light"] .auth-badge {
+        background: rgba(79, 70, 229, 0.08);
+        border-color: rgba(79, 70, 229, 0.2);
+      }
+
+      .auth-body {
+        padding: 1.1rem;
+        display: grid;
+        gap: 0.9rem;
+      }
+
+      .field {
+        display: grid;
+        gap: 0.35rem;
+      }
+
+      .label {
+        font-size: 0.78rem;
+        color: var(--text-muted);
+        font-weight: 600;
+        letter-spacing: 0.02em;
+      }
+
+      .input {
+        width: 100%;
+        border-radius: 14px;
+        border: 1px solid rgba(148, 163, 184, 0.55);
+        background: rgba(15, 23, 42, 0.92);
+        color: var(--text-main);
+        padding: 0.62rem 0.75rem;
+        font-size: 0.9rem;
+        outline: none;
+        transition: border-color var(--transition), box-shadow var(--transition);
+      }
+
+      [data-theme="light"] .input {
+        background: #ffffff;
+        border-color: var(--border-soft);
+      }
+
+      .input:focus {
+        border-color: rgba(129, 140, 248, 0.95);
+        box-shadow: 0 10px 26px rgba(37, 99, 235, 0.25);
+      }
+
+      .pass-wrap {
+        position: relative;
+      }
+
+      /* ✅ Keep your existing ids for logic, only reposition icons nicely */
+      #passUnVisibler,
+      #passVisibler {
+        position: absolute;
+        right: 0.7rem;
+        top: 2.2rem;
+        cursor: pointer;
+        user-select: none;
+      }
+
+      .auth-actions {
+        padding: 0 1.1rem 1.15rem;
+        display: grid;
+        gap: 0.85rem;
+      }
+
+      .btn-primary {
+        width: 100%;
+        border-radius: var(--radius-full);
+        padding: 0.62rem 1rem;
+        background: linear-gradient(135deg, #6366f1, #22d3ee);
+        border: none;
+        color: white;
+        cursor: pointer;
+        font-weight: 650;
+        font-size: 0.92rem;
+        box-shadow: 0 12px 30px rgba(56, 189, 248, 0.35);
+        transition: transform var(--transition-fast), filter var(--transition-fast);
+      }
+      .btn-primary:hover {
+        filter: brightness(1.06);
+        transform: translateY(-1px);
+      }
+
+      .auth-foot {
+        color: var(--text-muted);
+        font-size: 0.88rem;
+        line-height: 1.35;
+      }
+
+      .auth-foot a {
+        color: #60a5fa;
+        text-decoration: underline;
+      }
+
+      @media (max-width: 520px) {
+        .shell {
+          padding-inline: 1rem;
+        }
+        .auth-card {
+          max-width: 100%;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <header class="navbar">
+      <div class="navbar-inner">
+        <div class="brand">
+          <div class="brand-logo">S</div>
+          <div>
+            <div class="brand-title">Snap Notes</div>
+            <div class="brand-subtitle">Smart notes library</div>
+          </div>
+        </div>
+
+        <div class="nav-right">
+          <div class="theme-toggle" id="themeToggle" title="Toggle theme">
+            <i data-lucide="sun" style="width: 18px; height: 18px"></i>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="shell">
+      <section class="auth-wrap">
+        <div class="auth-card">
+          <div class="auth-head">
+            <div class="auth-title">
+              <h1>Login to your account</h1>
+              <p>Get started with Snap Notes — just login and continue.</p>
+            </div>
+            <div class="auth-badge" aria-hidden="true">
+              <i data-lucide="log-in" style="width: 18px; height: 18px"></i>
+            </div>
+          </div>
+
+          <!-- ✅ Logic unchanged: same form, same names, same ids -->
+          <form action="" method="post">
+            <div class="auth-body">
+              <div class="field">
+                <label class="label" for="emailInput">Email</label>
                 <input
+                  id="emailInput"
                   type="email"
                   required
                   name="email"
                   placeholder="Email"
-                  class="border rounded-lg px-3 py-2 mb-5 text-sm w-full outline-none border-white dark:border-white bg-stone-100 dark:bg-stone-100"
+                  class="input"
+                />
+              </div>
+
+              <div class="field pass-wrap">
+                <label class="label" for="passInput">Password</label>
+
+                <svg
+                  id="passVisibler"
+                  class="hidden"
+                  xmlns="http://www.w3.org/2000/svg"
+                  height="24px"
+                  viewBox="0 -960 960 960"
+                  width="24px"
+                  fill="#9ca3af"
+                >
+                  <path
+                    d="M480-320q75 0 127.5-52.5T660-500q0-75-52.5-127.5T480-680q-75 0-127.5 52.5T300-500q0 75 52.5 127.5T480-320Zm0-72q-45 0-76.5-31.5T372-500q0-45 31.5-76.5T480-608q45 0 76.5 31.5T588-500q0 45-31.5 76.5T480-392Zm0 192q-146 0-266-81.5T40-500q54-137 174-218.5T480-800q146 0 266 81.5T920-500q-54 137-174 218.5T480-200Zm0-300Zm0 220q113 0 207.5-59.5T832-500q-50-101-144.5-160.5T480-720q-113 0-207.5 59.5T128-500q50 101 144.5 160.5T480-280Z"
+                  />
+                </svg>
+
+                <svg
+                  id="passUnVisibler"
+                  xmlns="http://www.w3.org/2000/svg"
+                  height="26px"
+                  viewBox="0 -960 960 960"
+                  width="26px"
+                  fill="#9ca3af"
+                >
+                  <path
+                    d="m644-428-58-58q9-47-27-88t-93-32l-58-58q17-8 34.5-12t37.5-4q75 0 127.5 52.5T660-500q0 20-4 37.5T644-428Zm128 126-58-56q38-29 67.5-63.5T832-500q-50-101-143.5-160.5T480-720q-29 0-57 4t-55 12l-62-62q41-17 84-25.5t90-8.5q151 0 269 83.5T920-500q-23 59-60.5 109.5T772-302Zm20 246L624-222q-35 11-70.5 16.5T480-200q-151 0-269-83.5T40-500q21-53 53-98.5t73-81.5L56-792l56-56 736 736-56 56ZM222-624q-29 26-53 57t-41 67q50 101 143.5 160.5T480-280q20 0 39-2.5t39-5.5l-36-38q-11 3-21 4.5t-21 1.5q-75 0-127.5-52.5T300-500q0-11 1.5-21t4.5-21l-84-82Zm319 93Zm-151 75Z"
+                  />
+                </svg>
+
+                <input
+                  id="passInput"
+                  placeholder="••••••••"
+                  required
+                  class="input"
+                  type="password"
+                  name="password"
                 />
               </div>
             </div>
-            <div class="w-full flex flex-col gap-2">
-              <label class="font-semibold text-xs text-gray-400">
-                Password
-              </label>
-              <svg id="passVisibler" class="absolute ml-56 mt-8 cursor-pointer hidden" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#434343"><path d="M480-320q75 0 127.5-52.5T660-500q0-75-52.5-127.5T480-680q-75 0-127.5 52.5T300-500q0 75 52.5 127.5T480-320Zm0-72q-45 0-76.5-31.5T372-500q0-45 31.5-76.5T480-608q45 0 76.5 31.5T588-500q0 45-31.5 76.5T480-392Zm0 192q-146 0-266-81.5T40-500q54-137 174-218.5T480-800q146 0 266 81.5T920-500q-54 137-174 218.5T480-200Zm0-300Zm0 220q113 0 207.5-59.5T832-500q-50-101-144.5-160.5T480-720q-113 0-207.5 59.5T128-500q50 101 144.5 160.5T480-280Z"/></svg>
-              <svg id="passUnVisibler" class="absolute ml-56 mt-8 cursor-pointer" xmlns="http://www.w3.org/2000/svg" height="26px" viewBox="0 -960 960 960" width="26px" fill="#434343"><path d="m644-428-58-58q9-47-27-88t-93-32l-58-58q17-8 34.5-12t37.5-4q75 0 127.5 52.5T660-500q0 20-4 37.5T644-428Zm128 126-58-56q38-29 67.5-63.5T832-500q-50-101-143.5-160.5T480-720q-29 0-57 4t-55 12l-62-62q41-17 84-25.5t90-8.5q151 0 269 83.5T920-500q-23 59-60.5 109.5T772-302Zm20 246L624-222q-35 11-70.5 16.5T480-200q-151 0-269-83.5T40-500q21-53 53-98.5t73-81.5L56-792l56-56 736 736-56 56ZM222-624q-29 26-53 57t-41 67q50 101 143.5 160.5T480-280q20 0 39-2.5t39-5.5l-36-38q-11 3-21 4.5t-21 1.5q-75 0-127.5-52.5T300-500q0-11 1.5-21t4.5-21l-84-82Zm319 93Zm-151 75Z"/></svg>
-              <input
-                id="passInput"
-                placeholder="••••••••"
-                required
-                class="border rounded-lg px-3 py-2 mb-5 text-sm w-full outline-none border-white bg-stone-100 dark:border-white dark:bg-stone-100"
-                type="password"
-                name="password"
-              />
+
+            <div class="auth-actions">
+              <button class="btn-primary" type="submit">Login</button>
+
+              <div class="auth-foot">
+                Don’t have an account?
+                <a href="/signup">Signup</a>
+              </div>
             </div>
-            <div>
-              <button class="py-1 px-8 bg-blue-500 hover:bg-blue-800 focus:ring-offset-blue-200 text-white w-full transition ease-in duration-200 text-center text-base font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 rounded-lg cursor-pointer select-none">
-                Login
-              </button>
-              <p class="mt-4 text-white dark:text-white">
-                Don't have an account!
-                <a href="/signup" class="text-blue-400 underline">
-                  Signup
-                </a>
-              </p>
-            </div>
-          </div>
+          </form>
         </div>
-      </form>
-    </div>
+      </section>
+    </main>
 
     <script>
+      // ✅ Keep your original logic EXACTLY (only moved here)
+      const passInput = document.getElementById("passInput");
+      const passUnVisibler = document.getElementById("passUnVisibler");
+      const passVisibler = document.getElementById("passVisibler");
 
-      const passInput = document.getElementById("passInput")
-      const passUnVisibler = document.getElementById("passUnVisibler")
-      const passVisibler = document.getElementById("passVisibler")
- 
-      passUnVisibler.addEventListener("click", ()=>{
-        if(passUnVisibler.classList.contains("hidden")){
-          passUnVisibler.classList.remove("hidden")
-          passVisibler.classList.add("hidden")
-        } else{
-          passUnVisibler.classList.add("hidden")
-          passVisibler.classList.remove("hidden")
-          passInput.type = "text"
+      passUnVisibler.addEventListener("click", () => {
+        if (passUnVisibler.classList.contains("hidden")) {
+          passUnVisibler.classList.remove("hidden");
+          passVisibler.classList.add("hidden");
+        } else {
+          passUnVisibler.classList.add("hidden");
+          passVisibler.classList.remove("hidden");
+          passInput.type = "text";
         }
-      })
+      });
 
-      passVisibler.addEventListener("click", ()=>{
-        if(passVisibler.classList.contains("hidden")){
-          passUnVisibler.classList.add("hidden")
-          passVisibler.classList.remove("hidden")
-        } else{
-          passUnVisibler.classList.remove("hidden")
-          passVisibler.classList.add("hidden")
-          passInput.type = "password"
+      passVisibler.addEventListener("click", () => {
+        if (passVisibler.classList.contains("hidden")) {
+          passUnVisibler.classList.add("hidden");
+          passVisibler.classList.remove("hidden");
+        } else {
+          passUnVisibler.classList.remove("hidden");
+          passVisibler.classList.add("hidden");
+          passInput.type = "password";
         }
-      })
-
-
+      });
     </script>
-    
-</body>
+
+    <script>
+      // Theme toggle (same behavior as home page)
+      const themeToggleBtn = document.getElementById("themeToggle");
+      const htmlElement = document.documentElement;
+
+      const setThemeIcon = (name) => {
+        themeToggleBtn.innerHTML = `<i data-lucide="${name}" style="width:18px;height:18px"></i>`;
+        lucide.createIcons();
+      };
+
+      const savedTheme = localStorage.getItem("theme");
+      if (savedTheme === "light") {
+        htmlElement.setAttribute("data-theme", "light");
+        setThemeIcon("moon");
+      } else {
+        htmlElement.removeAttribute("data-theme");
+        setThemeIcon("sun");
+      }
+
+      themeToggleBtn.addEventListener("click", () => {
+        const currentTheme = htmlElement.getAttribute("data-theme");
+        if (currentTheme === "light") {
+          htmlElement.removeAttribute("data-theme");
+          localStorage.setItem("theme", "dark");
+          setThemeIcon("sun");
+        } else {
+          htmlElement.setAttribute("data-theme", "light");
+          localStorage.setItem("theme", "light");
+          setThemeIcon("moon");
+        }
+      });
+
+      lucide.createIcons();
+    </script>
+  </body>
 </html>
