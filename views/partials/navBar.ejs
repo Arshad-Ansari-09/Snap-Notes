@@ -1,144 +1,289 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <title>Document</title>
-  </head>
-  <body class="bg-stone-300">
-    <div>
-      <nav class="bg-stone-100 p-4 shadow-md/20 flex items-center">
-        <!-- Logo -->
-        <div class="mx-4">
-          <h1 class="text-2xl font-semibold">Snap Notes</h1>
+<head>
+  <meta charset="UTF-8" />
+  <title>Snap Notes Navbar</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0" />
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  
+  <!-- Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Lucide icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+    :root {
+      /* Dark Theme (Default) */
+      --bg: #050816;
+      --bg-alt: #020617;
+      --primary: #6366f1;
+      --text-main: #e5e7eb;
+      --text-muted: #9ca3af;
+      --card-bg: rgba(15, 23, 42, 0.92);
+      --border-soft: rgba(148, 163, 184, 0.35);
+      --radius-full: 999px;
+      --transition-fast: 150ms ease;
+      --transition: 220ms ease;
+    }
+    
+    [data-theme="light"] {
+      /* Light Theme Overrides */
+      --bg: #f8fafc;
+      --bg-alt: #ffffff;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --card-bg: #ffffff;
+      --border-soft: #e2e8f0;
+      --primary: #4f46e5;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Poppins", sans-serif; -webkit-tap-highlight-color: transparent; }
+    
+    body {
+      min-height: 100vh;
+      color: var(--text-main);
+      background: var(--bg); /* Just for preview context */
+      transition: background var(--transition), color var(--transition);
+    }
+
+    .navbar {
+      position: sticky; 
+      top: 0; 
+      z-index: 50; 
+      backdrop-filter: blur(18px);
+      background: linear-gradient(to bottom, rgba(15,23,42,0.95), rgba(15,23,42,0.88), transparent);
+      border-bottom: 1px solid rgba(148, 163, 184, 0.32);
+      transition: background var(--transition), border-color var(--transition);
+    }
+    
+    [data-theme="light"] .navbar { 
+      background: rgba(255, 255, 255, 0.9); 
+      border-bottom: 1px solid var(--border-soft); 
+    }
+    
+    .navbar-inner {
+      max-width: 1280px; 
+      margin: 0 auto; 
+      padding: 0.7rem 1.5rem 0.6rem;
+      display: flex; 
+      align-items: center; 
+      justify-content: space-between; 
+      gap: 1rem;
+    }
+    
+    /* Brand / Logo */
+    .brand { display: flex; align-items: center; gap: 0.6rem; white-space: nowrap; flex-shrink: 0; }
+    
+    .brand-logo {
+      width: 32px; height: 32px; border-radius: 12px;
+      background: conic-gradient(from 190deg, #4f46e5, #22c55e, #06b6d4, #f97316, #6366f1);
+      display: flex; align-items: center; justify-content: center;
+      color: white; font-weight: 700; font-size: 1.1rem;
+      box-shadow: 0 0 0 1px rgba(15,23,42,0.9), 0 12px 25px rgba(56,189,248,0.45);
+    }
+    
+    .brand-title {
+      font-size: 1.2rem; font-weight: 600; letter-spacing: 0.04em;
+      background: linear-gradient(to right, #e5e7eb, #a5b4fc);
+      -webkit-background-clip: text; color: transparent;
+    }
+    [data-theme="light"] .brand-title { 
+      background: linear-gradient(to right, #1e293b, #4338ca); 
+      -webkit-background-clip: text; 
+    }
+    
+    .brand-subtitle { 
+      font-size: 0.7rem; color: var(--text-muted); letter-spacing: 0.09em; text-transform: uppercase; 
+    }
+
+    /* Navigation Links */
+    .nav-links { 
+      display: none; /* Hidden on mobile by default */
+      align-items: center; gap: 1.4rem; font-size: 0.88rem; 
+    }
+    /* Show links on larger screens */
+    @media (min-width: 769px) { 
+      .nav-links { display: flex; flex: 1; margin-left: 2rem; } 
+    }
+
+    .nav-links a { 
+      position: relative; color: var(--text-muted); text-decoration: none; padding: 0.2rem 0; 
+      transition: color var(--transition-fast);
+    }
+    .nav-links a::after {
+      content: ""; position: absolute; left: 0; bottom: -0.3rem; height: 2px; border-radius: 999px;
+      width: 0%; background: linear-gradient(to right, #6366f1, #22d3ee);
+      transition: width var(--transition-fast);
+    }
+    .nav-links a:hover { color: var(--text-main); }
+    .nav-links a:hover::after { width: 100%; }
+    .nav-links a.active { color: var(--text-main); }
+    .nav-links a.active::after { width: 60%; }
+
+    /* Right Side Items */
+    .nav-right { display: flex; align-items: center; gap: 0.8rem; flex-shrink: 0; }
+
+    /* Buttons */
+    .btn {
+      border-radius: var(--radius-full); 
+      border: 1px solid rgba(148, 163, 184, 0.5);
+      padding: 0.35rem 0.9rem; 
+      font-size: 0.8rem; 
+      display: inline-flex; align-items: center; gap: 0.28rem;
+      color: var(--text-main); 
+      background: rgba(15,23,42,0.9); 
+      cursor: pointer; outline: none;
+      transition: transform var(--transition-fast), box-shadow var(--transition-fast), border-color var(--transition-fast);
+      box-shadow: 0 10px 25px rgba(15,23,42,0.7);
+    }
+    [data-theme="light"] .btn { 
+      background: #ffffff; border-color: var(--border-soft); box-shadow: 0 4px 12px rgba(0,0,0,0.05); color: var(--text-main); 
+    }
+    .btn:hover { transform: translateY(-1px); border-color: rgba(129,140,248,0.9); }
+    .btn:active { transform: scale(0.96); }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #6366f1, #22d3ee); 
+      border: none; color: white !important; font-weight: 500;
+      box-shadow: 0 12px 30px rgba(56,189,248,0.55);
+    }
+    [data-theme="light"] .btn-primary { background: linear-gradient(135deg, #4f46e5, #0ea5e9); }
+    .btn-primary:hover { filter: brightness(1.06); transform: translateY(-2px); }
+
+    /* Theme Toggle */
+    .theme-toggle {
+      width: 36px; height: 36px; border-radius: 999px;
+      border: 1px solid var(--border-soft);
+      background: var(--card-bg);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      color: var(--text-main);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      transition: all var(--transition-fast);
+    }
+    [data-theme="light"] .theme-toggle { background: #fff; color: #f59e0b; }
+    .theme-toggle:hover { transform: rotate(20deg); border-color: var(--primary); }
+
+    /* Avatar */
+    .avatar {
+      width: 34px; height: 34px; border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.8);
+      background: radial-gradient(circle at 30% 0, #e5e7eb, #6b7280 55%, #020617);
+      display: flex; align-items: center; justify-content: center;
+      color: #0b1120; font-weight: 600; font-size: 0.82rem;
+      box-shadow: 0 8px 18px rgba(15,23,42,0.7);
+      cursor: pointer;
+      transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+    }
+    .avatar:hover { transform: translateY(-1px) scale(1.02); box-shadow: 0 12px 26px rgba(15,23,42,0.85); }
+    .avatar a { color: inherit; text-decoration: none; }
+
+    /* Mobile Responsive Adjustments */
+    @media (max-width: 768px) {
+      .navbar-inner { padding-inline: 1.1rem; gap: 0.5rem; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- =========================================
+       3. NAVBAR HTML
+  ========================================= -->
+  <header class="navbar">
+    <div class="navbar-inner">
+      <!-- Brand -->
+      <div class="brand">
+        <div class="brand-logo">S</div>
+        <div>
+          <div class="brand-title">Snap Notes</div>
+          <div class="brand-subtitle">Smart library</div>
         </div>
-
-        <!-- Tablet & Desktop Menu -->
-        <div class="hidden lg:flex lg:space-x-6 sm:space-x-4 mx-4 flex-wrap">
-          <a href="/" class="hover:text-stone-400 text-base lg:text-lg">Home</a>
-          <a href="/friends" class="hover:text-stone-400 text-base lg:text-lg"
-            >Friends</a
-          >
-          <a
-            href="/upload/notes"
-            class="hover:text-stone-400 text-base lg:text-lg"
-            >Upload Notes</a
-          >
-          <a href="/myNotes" class="hover:text-stone-400 text-base lg:text-lg"
-            >My Notes</a
-          >
-
-          <!-- Services Dropdown -->
-          <div class="relative group">
-            <button
-              class="hover:text-stone-400 text-base lg:text-lg flex items-center"
-            >
-              Services
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                class="ml-1"
-                height="20px"
-                viewBox="0 -960 960 960"
-                width="20px"
-                fill="#000000"
-              >
-                <path d="M480-360 280-560h400L480-360Z" />
-              </svg>
-            </button>
-
-            <!-- Dropdown Content -->
-            <div
-              class="absolute hidden group-hover:block bg-stone-200 shadow-lg rounded-md w-48 z-50"
-            >
-              <a
-                href="/change/profileImg"
-                class="block px-4 py-2 hover:bg-stone-100 text-md text-gray-700"
-                >Change Profile Img</a
-              >
-              <a
-                href="/logout"
-                class="block px-4 py-2 hover:bg-stone-100 text-md text-gray-700"
-                >Logout <svg class="inline" xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="#000000"><path d="M212.31-140Q182-140 161-161q-21-21-21-51.31v-535.38Q140-778 161-799q21-21 51.31-21h268.07v60H212.31q-4.62 0-8.46 3.85-3.85 3.84-3.85 8.46v535.38q0 4.62 3.85 8.46 3.84 3.85 8.46 3.85h268.07v60H212.31Zm436.92-169.23-41.54-43.39L705.08-450H363.85v-60h341.23l-97.39-97.38 41.54-43.39L820-480 649.23-309.23Z"/></svg></a
-              >
-            </div>
-          </div>
-        </div>
-
-        <!-- Profile Icon (desktop only) -->
-        <div class="hidden lg:block ml-auto mx-4">
-          <a href="/profile">
-            <svg
-             class="hover:fill-blue-500"
-             xmlns="http://www.w3.org/2000/svg" 
-             height="24px" 
-             viewBox="0 -960 960 960" 
-             width="24px" 
-             fill="#000000">
-             <path d="M234-276q51-39 114-61.5T480-360q69 0 132 22.5T726-276q35-41 54.5-93T800-480q0-133-93.5-226.5T480-800q-133 0-226.5 93.5T160-480q0 59 19.5 111t54.5 93Zm246-164q-59 0-99.5-40.5T340-580q0-59 40.5-99.5T480-720q59 0 99.5 40.5T620-580q0 59-40.5 99.5T480-440Zm0 360q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q53 0 100-15.5t86-44.5q-39-29-86-44.5T480-280q-53 0-100 15.5T294-220q39 29 86 44.5T480-160Zm0-360q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17Zm0-60Zm0 360Z"/>
-            </svg>
-          </a>
-        </div>
-
-        <!-- Mobile & Tablet Hamburger -->
-        <div class="lg:hidden ml-auto mx-4">
-          <button id="menu-btn" class="focus:outline-none">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="w-8 h-8"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M4 6h16M4 12h16M4 18h16"
-              />
-            </svg>
-          </button>
-        </div>
-      </nav>
-
-      <div
-        id="mobile-overlay"
-        class="hidden fixed inset-0 bg-black/30 backdrop-blur-sm z-40"
-      ></div>
-
-      <!-- Mobile Menu -->
-      <div
-        id="mobile-menu"
-        class="hidden fixed top-16 left-0 right-0 bg-stone-100 rounded-b-xl flex flex-col items-start space-y-4 py-4 px-8 z-50 shadow-lg"
-      >
-        <a href="/" class="hover:text-stone-400 text-lg w-full">Home</a>
-        <a href="/friends" class="hover:text-stone-400 text-lg w-full"
-          >Friends</a
-        >
-        <a href="/upload/notes" class="hover:text-stone-400 text-lg w-full"
-          >Upload Notes</a
-        >
-        <a href="/myNotes" class="hover:text-stone-400 text-lg w-full"
-          >My Notes</a
-        >
-        <a href="/change/profileImg" class="hover:text-stone-400 text-lg w-full"
-          >Change Profile Img</a
-        >
-        <a href="/logout" class="hover:text-stone-400 text-lg w-full">Logout</a>
-        <a href="/profile" class="hover:text-stone-400 text-lg w-full"
-          >Profile</a
-        >
       </div>
 
-      <!-- Toggle Script -->
-      <script>
-        const btn = document.getElementById("menu-btn");
-        const menu = document.getElementById("mobile-menu");
+      <!-- Links (Desktop Only) -->
+      <nav class="nav-links">
+        <a href="/" class="active">Home</a>
+        <a href="/friends">Friends</a>
+        <a href="/mynotes">My Notes</a>
+        <a href="">Services</a>
+      </nav>
 
-        btn.addEventListener("click", () => {
-          menu.classList.toggle("hidden");
-        });
-      </script>
+      <!-- Right Actions -->
+      <div class="nav-right">
+        <!-- Upload Button -->
+        <button id="upload-btn" class="btn btn-primary upload-btn" aria-label="Upload Notes">
+          <i data-lucide="upload" style="width:16px;height:16px"></i>
+          <!-- Hidden on very small screens, shown on small+ -->
+          <span class="hidden sm:inline-block">Upload</span>
+        </button>
+
+        <!-- Theme Toggle -->
+        <div class="theme-toggle" id="themeToggle" title="Toggle theme">
+          <i data-lucide="sun" style="width:18px;height:18px"></i>
+        </div>
+
+        <!-- User Profile -->
+        <div class="avatar" title="Profile">
+          <a href="/profile">RA</a>
+        </div>
+      </div>
     </div>
-  </body>
+  </header>
+
+  <div style="padding: 2rem; text-align:center; opacity: 0.5;">
+    <p>Page content would go here...</p>
+  </div>
+
+  <!-- =========================================
+       4. NAVBAR LOGIC (JS)
+  ========================================= -->
+  <script>
+    // Initialize Icons
+    lucide.createIcons();
+
+    /* --- Theme Toggle Logic --- */
+    const themeToggleBtn = document.getElementById('themeToggle');
+    const htmlElement = document.documentElement;
+
+    // Helper to safely set icon and re-init Lucide
+    const setThemeIcon = (name) => {
+      themeToggleBtn.innerHTML = `<i data-lucide="${name}" style="width:18px;height:18px"></i>`;
+      lucide.createIcons();
+    };
+
+    // Check LocalStorage on load
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'light') {
+      htmlElement.setAttribute('data-theme', 'light');
+      setThemeIcon('moon');
+    } else {
+      htmlElement.removeAttribute('data-theme');
+      setThemeIcon('sun');
+    }
+
+    // Toggle Click Event
+    themeToggleBtn.addEventListener('click', () => {
+      const currentTheme = htmlElement.getAttribute('data-theme');
+      if (currentTheme === 'light') {
+        htmlElement.removeAttribute('data-theme');
+        localStorage.setItem('theme', 'dark');
+        setThemeIcon('sun');
+      } else {
+        htmlElement.setAttribute('data-theme', 'light');
+        localStorage.setItem('theme', 'light');
+        setThemeIcon('moon');
+      }
+    });
+
+    /* --- Optional: Upload Button Stub --- */
+    document.getElementById('upload-btn').addEventListener('click', () => {
+      console.log("Upload button clicked - Logic to open modal goes here.");
+    });
+  </script>
+
+</body>
 </html>
