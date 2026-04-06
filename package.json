@@ -10,7 +10,7 @@
     "mongodb": "^6.21.0",
     "mongoose": "^8.17.1",
     "multer": "^2.0.2",
-    "multer-storage-cloudinary": "^2.2.1"
+    "multer-storage-cloudinary": "^4.0.0"
   },
   "name": "24.-note-sharing-app-in-nodejs",
   "version": "1.0.0",
