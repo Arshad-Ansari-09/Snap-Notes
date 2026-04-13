@@ -9,7 +9,7 @@ const cookieParser= require("cookie-parser")
 const {router} = require("./routes/routes")
 const PORT = process.env.PORT || 8000;
 
-connect(process.env.atlas_URL)
+connect(process.env.MONGO_URI)
 .then(() => console.log("MONGO DB CONNECTED"))
 .catch((err) => console.log(err))
 

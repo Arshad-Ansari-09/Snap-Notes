@@ -69,7 +69,7 @@ async function login(req, res) {
 async function friendsPage(req, res) {
     const loggedInUser = await User.findOne({ email: req.user.email }).populate("friends");
     const user = await User.findOne({ _id: req.params.id }).populate("posts")
-    res.render("friends", { friends: loggedInUser.friends, user });
+    res.render("friends", { loggedInUser, friends: loggedInUser.friends, user });
 }
 
 // User's all notes Page

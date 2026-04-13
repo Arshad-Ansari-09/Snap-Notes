@@ -132,51 +132,26 @@
         align-items: center;
         gap: 2rem;
       }
-      .brand {
-        display: flex;
-        align-items: center;
-        gap: 0.6rem;
-        white-space: nowrap;
-      }
-      .brand-logo {
-        width: 32px;
-        height: 32px;
-        border-radius: 12px;
-        background: conic-gradient(
-          from 190deg,
-          #4f46e5,
-          #22c55e,
-          #06b6d4,
-          #f97316,
-          #6366f1
-        );
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: white;
-        font-weight: 700;
-        font-size: 1.1rem;
-        box-shadow: 0 0 0 1px rgba(15, 23, 42, 0.9),
-          0 12px 25px rgba(56, 189, 248, 0.45);
-      }
-      .brand-title {
-        font-size: 1.2rem;
-        font-weight: 600;
-        letter-spacing: 0.04em;
-        background: linear-gradient(to right, #e5e7eb, #a5b4fc);
-        -webkit-background-clip: text;
-        color: transparent;
-      }
-      [data-theme="light"] .brand-title {
-        background: linear-gradient(to right, #1e293b, #4338ca);
-        -webkit-background-clip: text;
-      }
-      .brand-subtitle {
-        font-size: 0.7rem;
-        color: var(--text-muted);
-        letter-spacing: 0.09em;
-        text-transform: uppercase;
-      }
+      .brand { display: flex; align-items: center; gap: 0.6rem; white-space: nowrap; }
+    .brand-logo {
+      width: 32px; height: 32px; border-radius: 12px;
+      background: conic-gradient(from 190deg, #4f46e5, rgba(56,189,248,0.45), #06b6d4, #6366f1);
+      display: flex; align-items: center; justify-content: center;
+      color: white; font-weight: 700; font-size: 1.1rem;
+      box-shadow: 0 0 0 1px rgba(15,23,42,0.9), 0 12px 25px rgba(56,189,248,0.45);
+    }
+    .brand-title {
+      font-size: 1.2rem; font-weight: 600; letter-spacing: 0.04em;
+      background: linear-gradient(to right, #e5e7eb, #a5b4fc);
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+    /* Light Theme Brand Title */
+    [data-theme="light"] .brand-title {
+      background: linear-gradient(to right, #1e293b, #4338ca);
+      -webkit-background-clip: text;
+    }
+    .brand-subtitle { font-size: 0.7rem; color: var(--text-muted); letter-spacing: 0.09em; text-transform: uppercase; }
       .nav-links {
         display: flex;
         align-items: center;
@@ -858,7 +833,9 @@
           <a href="/">Home</a>
           <a href="/friends">Friends</a>
           <a href="/mynotes" class="active">My Notes</a>
-          <a href="">Services</a>
+          <a href="/logout">
+            <i data-lucide="log-out" style="width:18px;height:18px"></i>
+          </a>
         </nav>
 
         <div class="nav-right">
