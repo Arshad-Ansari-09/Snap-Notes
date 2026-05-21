@@ -61,7 +61,7 @@ async function login(req, res) {
     }
 
     const token = signToken({ email, _id: user._id })
-    res.cookie("token", token, { httpOnly: true })
+    res.cookie("token", token, { httpOnly: true, maxAge: 1000 * 60 * 60 * 24 * 7 })
     res.redirect("/")
 }
 
