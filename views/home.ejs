@@ -1179,23 +1179,23 @@
     <!-- Inputs -->
     <div class="mt-4 space-y-4 px-2">
       <div>
-        <label class="block font-medium">Class and Sem name</label>
+        <label class="block font-medium">Class and Sem name / Title</label>
         <input 
           required
           type="text" 
           name="classname" 
           class="h-10 w-full bg-stone-200 mb-1 border border-black px-3 block" 
-          placeholder="eg: BCA 2nd">
+          placeholder="eg: BCA 2nd / Docker Cheet Sheet">
       </div>
 
       <div>
-        <label class="block font-medium">Notes Info</label>
+        <label class="block font-medium">Notes Info / Description</label>
         <input 
           required
           type="text" 
           name="notesInfo" 
           class="h-10 w-full bg-stone-200 mb-1 border border-black px-3 block" 
-          placeholder="eg: DBMS unit-1">
+          placeholder="eg: DBMS unit-1 / Docker Cheet Sheet">
       </div>
     </div>
 
@@ -1221,8 +1221,10 @@
         <input
           name="notesImages"
           class="h-full w-full opacity-0 cursor-pointer"
+          accept="image/*,.pdf"
           type="file"
           multiple
+          required
         />
       </div>
     </div>
@@ -1242,6 +1244,11 @@
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/compressorjs@1.2.1/dist/compressor.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <script>
+  pdfjsLib.GlobalWorkerOptions.workerSrc =
+    "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+</script>
   <script>
     // Get the form and file input elements
 const form = document.querySelector('form');
@@ -1259,21 +1266,39 @@ form.addEventListener('submit', async function(e) {
     submitButton.disabled = true;
 
     const originalFiles = Array.from(fileInput.files);
-    
-    if (originalFiles.length === 0) {
-        alert("Please select files to upload.");
-        resetFormState();
-        return;
+
+if (originalFiles.length === 0) {
+    alert("Please select files to upload.");
+    resetFormState();
+    return;
+}
+
+try {
+
+    let finalFiles = [];
+
+for (const file of originalFiles) {
+
+    // PDF Files
+    if (file.type === "application/pdf") {
+
+        const pdfImages = await convertPdfToImages(file);
+
+        // DON'T compress again
+        finalFiles.push(...pdfImages);
+
+    } else {
+
+        // Only compress normal images
+        const compressed = await compressAllFiles([file]);
+
+        finalFiles.push(...compressed);
     }
+}
 
-    try {
-        // 2. Process Files (Compression/Resizing)
-        const compressedFiles = await compressAllFiles(originalFiles);
+await submitCompressedData(finalFiles);
 
-        // 3. Build New FormData and Submit via Fetch
-        await submitCompressedData(compressedFiles);
-
-    } catch (error) {
+} catch (error) {
         console.error("Upload failed:", error);
         alert("An error occurred during upload or compression.");
         resetFormState();
@@ -1285,10 +1310,70 @@ function resetFormState() {
     submitButton.disabled = false;
 }
 
+async function convertPdfToImages(file) {
 
-// ----------------------------------------------------
-// 2. Compression Helper Function (Using Compressor.js)
-// ----------------------------------------------------
+  const pdfjsLib = window.pdfjsLib;
+
+  const arrayBuffer = await file.arrayBuffer();
+
+  const pdf = await pdfjsLib.getDocument({
+    data: arrayBuffer
+  }).promise;
+
+  const imageFiles = [];
+
+  // Process pages in parallel batches
+  const batchSize = 3;
+
+  for (let i = 1; i <= pdf.numPages; i += batchSize) {
+
+    const batch = [];
+
+    for (
+      let pageNum = i;
+      pageNum < i + batchSize && pageNum <= pdf.numPages;
+      pageNum++
+    ) {
+
+      batch.push((async () => {
+
+        const page = await pdf.getPage(pageNum);
+
+        const viewport = page.getViewport({ scale: 2.5 });
+
+        const canvas = document.createElement("canvas");
+        const context = canvas.getContext("2d");
+
+        canvas.width = viewport.width;
+        canvas.height = viewport.height;
+
+        await page.render({
+          canvasContext: context,
+          viewport
+        }).promise;
+
+        const blob = await new Promise(resolve =>
+          canvas.toBlob(resolve, "image/jpeg", 0.92)
+        );
+
+        return new File(
+          [blob],
+          `${file.name}-page-${pageNum}.jpg`,
+          { type: "image/jpeg" }
+        );
+
+      })());
+    }
+
+    const results = await Promise.all(batch);
+
+    imageFiles.push(...results);
+  }
+
+  return imageFiles;
+}
+
+// Compression Helper Function (Using Compressor.js)
 function compressAllFiles(files) {
     const compressionPromises = files.map(file => {
         return new Promise((resolve, reject) => {

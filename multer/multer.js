@@ -31,7 +31,7 @@ const storage = new CloudinaryStorage({
  params: {
   folder: "notes_images",
   resource_type: "auto",
-    // 💡 OPTIMIZATION STEP: Apply transformation to compress files immediately
+    // OPTIMIZATION STEP: Apply transformation to compress files immediately
     transformation: [
         { quality: "auto:low" }, // Adjust quality automatically for smaller file size
         { fetch_format: "auto" } // Deliver in best modern format (e.g., WebP)
@@ -39,7 +39,7 @@ const storage = new CloudinaryStorage({
  },
 });
 
-// **Updated Multer Setup for Notes Upload**
+// Updated Multer Setup for Notes Upload
 const upload = multer({ 
     storage, 
     limits: { 
