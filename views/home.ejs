@@ -367,7 +367,7 @@
     }
 
     .note-body { padding: 0.9rem 0.95rem 0.95rem; display: flex; flex-direction: column; gap: 0.4rem; }
-    .note-title { font-size: 1rem; line-clamp: 1; font-weight: 600; letter-spacing: 0.01em; color: var(--text-main); }
+    .note-title { font-size: 1rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 600; letter-spacing: 0.01em; color: var(--text-main); }
 
     .note-meta { font-size: 0.78rem; color: var(--text-muted); display: flex; flex-direction: column; gap: 0.18rem; margin-top: 0.18rem; }
     .author { display: inline-flex; align-items: center; gap: 0.3rem; }
@@ -1107,7 +1107,7 @@
             </div>
 
             <div class="note-body">
-              <p class="note-title"><%= note.notesInfo %></h5>
+              <p class="note-title"><%= note.notesInfo %></p>
 
               <div class="tags">
                 <span class="tag"><%= note.classname %></span>
