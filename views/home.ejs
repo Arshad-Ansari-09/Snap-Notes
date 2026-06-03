@@ -833,6 +833,30 @@
   color: var(--text-main);
 }
 
+/* 1. Main Component Styles */
+.upload-status {
+  font-size: 0.85rem;
+  font-weight: 500;
+  animation: uploadFade 0.25s ease both;
+}
+
+/* 2. Light Theme Override (Fixed class name) */
+[data-theme="light"] .upload-status {
+  background: #222;
+}
+
+/* 3. Animation Keyframes */
+@keyframes uploadFade {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .upload-panel input[type="text"], .upload-panel input[type="file"] {
   padding: 0px 5px;
   margin-bottom: 5px;
@@ -1185,7 +1209,7 @@
           type="text" 
           name="classname" 
           class="h-10 w-full bg-stone-200 mb-1 border border-black px-3 block" 
-          placeholder="eg: BCA 2nd / Docker Cheet Sheet">
+          placeholder="eg: BCA 2nd / Docker">
       </div>
 
       <div>
@@ -1230,13 +1254,17 @@
     </div>
 
     <!-- Submit Button -->
-    <div class="flex justify-center mt-4 mb-6">
+    <div class="flex flex-col gap-2 justify-center items-center mt-4 mb-6">
       <button
         type="submit"
         class="bg-blue-600 px-6 py-2 rounded-md hover:bg-blue-700 text-white cursor-pointer w-full sm:w-auto"
       >
         Upload
       </button>
+      <p
+        id="uploadStatus"
+        class="hidden mt-3 text-sm text-center text-gray-200"
+      ></p>
     </div>
   </div>
 </form>
@@ -1254,6 +1282,7 @@
 const form = document.querySelector('form');
 const fileInput = document.querySelector('input[name="notesImages"]');
 const submitButton = form.querySelector('button[type="submit"]');
+const uploadStatus = document.getElementById("uploadStatus");
 
 // ----------------------------------------------------
 // 1. Intercept the Form Submission
@@ -1264,6 +1293,10 @@ form.addEventListener('submit', async function(e) {
     // Disable button and show loading state
     submitButton.textContent = 'Compressing & Uploading...';
     submitButton.disabled = true;
+
+    uploadStatus.classList.remove("hidden");
+    uploadStatus.textContent =
+      "Preparing files. Please don't close this page.";
 
     const originalFiles = Array.from(fileInput.files);
 
@@ -1296,6 +1329,9 @@ for (const file of originalFiles) {
     }
 }
 
+uploadStatus.textContent =
+  `Uploading ${finalFiles.length} pages. Please Don't leave, This may take some time for large fIles.`;
+
 await submitCompressedData(finalFiles);
 
 } catch (error) {
@@ -1308,6 +1344,8 @@ await submitCompressedData(finalFiles);
 function resetFormState() {
     submitButton.textContent = 'Upload';
     submitButton.disabled = false;
+    uploadStatus.classList.add("hidden");
+    uploadStatus.textContent = "";
 }
 
 async function convertPdfToImages(file) {
@@ -1334,6 +1372,9 @@ async function convertPdfToImages(file) {
       pageNum < i + batchSize && pageNum <= pdf.numPages;
       pageNum++
     ) {
+
+      uploadStatus.textContent =
+        `Converting PDF pages... ${pageNum}/${pdf.numPages}`;
 
       batch.push((async () => {
 
@@ -1421,6 +1462,8 @@ async function submitCompressedData(files) {
     });
 
     if (response.ok) {
+      uploadStatus.textContent =
+        "Upload complete. Redirecting...";
         // Assuming your server responds with a redirect or a JSON success message
         window.location.href = '/'; // Manually redirect to the homepage
     } else {
