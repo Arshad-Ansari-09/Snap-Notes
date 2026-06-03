@@ -11,7 +11,7 @@ cloudinary.config({
 // For Uploading the notes
 // --- File Size and Type Restrictions ---
 // Set max file size to 5MB (5 * 1024 * 1024 bytes)
-const MAX_FILE_SIZE = 5 * 1024 * 1024; 
+const MAX_FILE_SIZE = 20 * 1024 * 1024; 
 
 // Define allowed MIME types for notes (e.g., JPEG, PNG, PDF)
 const fileFilter = (req, file, cb) => {
@@ -43,7 +43,7 @@ const storage = new CloudinaryStorage({
 const upload = multer({ 
     storage, 
     limits: { 
-        // Enforce the 5MB maximum size limit
+        // Enforce the 20MB maximum size limit
         fileSize: MAX_FILE_SIZE 
     },
     // Enforce file type check

@@ -33,7 +33,7 @@ router.post("/change/profileImg", checkAuth, profileimgUpload.single("profileImg
 
 // Upload Notes
 router.get("/upload/notes", checkAuth, uploadNotesPage)
-router.post("/upload/notes", checkAuth, upload.array("notesImages", 10) , uploadNotes)
+router.post("/upload/notes", checkAuth, upload.array("notesImages", 50) , uploadNotes)
 
 
 // Add To Friend
