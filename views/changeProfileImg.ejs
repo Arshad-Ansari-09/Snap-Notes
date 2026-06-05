@@ -20,18 +20,20 @@
 
     <style>
       :root {
-        --bg: #050816;
-        --bg-alt: #020617;
-        --primary: #6366f1;
-        --primary-soft: rgba(99, 102, 241, 0.16);
-        --accent: #f97316;
-        --text-main: #e5e7eb;
-        --text-muted: #9ca3af;
-        --card-bg: rgba(15, 23, 42, 0.92);
-        --border-soft: rgba(148, 163, 184, 0.35);
-        --radius-lg: 18px;
+        --bg: #0d1117;
+        --bg-secondary: #161b22;
+        --surface: #161b22;
+        --surface-hover: #1c2128;
+        --border: #30363d;
+        --border-hover: #3d444d;
+        --primary: #4f46e5;
+        --text-main: #f0f6fc;
+        --text-muted: #8b949e;
+        --success: #238636;
+        --danger: #da3633;
+        --radius-lg: 14px;
         --radius-full: 999px;
-        --shadow-soft: 0 18px 40px rgba(15, 23, 42, 0.55);
+        --shadow-soft: 0 6px 18px rgba(0,0,0,.25);
         --transition-fast: 150ms ease;
         --transition: 220ms ease;
       }
@@ -62,27 +64,7 @@
       body {
         min-height: 100vh;
         color: var(--text-main);
-        background: radial-gradient(
-            circle at 0% 0%,
-            rgba(56, 189, 248, 0.16),
-            transparent 55%
-          ),
-          radial-gradient(
-            circle at 100% 100%,
-            rgba(244, 114, 182, 0.16),
-            transparent 55%
-          ),
-          radial-gradient(
-            circle at 0% 100%,
-            rgba(129, 140, 248, 0.18),
-            transparent 55%
-          ),
-          radial-gradient(
-            circle at 100% 0%,
-            rgba(45, 212, 191, 0.12),
-            transparent 55%
-          ),
-          linear-gradient(135deg, #020617, #020617);
+        background: var(--bg);
         transition: background var(--transition), color var(--transition);
       }
       [data-theme="light"] body {
@@ -112,12 +94,7 @@
         top: 0;
         z-index: 50;
         backdrop-filter: blur(18px);
-        background: linear-gradient(
-          to bottom,
-          rgba(15, 23, 42, 0.95),
-          rgba(15, 23, 42, 0.88),
-          transparent
-        );
+        background: rgba(13,17,23,.92);
         border-bottom: 1px solid rgba(148, 163, 184, 0.32);
         margin-bottom: 1.2rem;
         transition: background var(--transition), border-color var(--transition);
@@ -134,17 +111,26 @@
         align-items: center;
         gap: 2rem;
       }
-      .brand { display: flex; align-items: center; gap: 0.6rem; white-space: nowrap; }
-    .brand-logo {
-      width: 32px; height: 32px; border-radius: 12px;
-      background: conic-gradient(from 190deg, #4f46e5, rgba(56,189,248,0.45), #06b6d4, #6366f1);
-      display: flex; align-items: center; justify-content: center;
-      color: white; font-weight: 700; font-size: 1.1rem;
-      box-shadow: 0 0 0 1px rgba(15,23,42,0.9), 0 12px 25px rgba(56,189,248,0.45);
+      .brand { 
+      display: flex; 
+      align-items: center; 
+      gap: 0.6rem; 
+      white-space: nowrap; 
+    }
+    .brand-logo{
+      width: 34px;
+      height: 34px;
+      background: var(--primary);
+      border-radius: 10px;
+      color: white;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-weight:700;
     }
     .brand-title {
       font-size: 1.2rem; font-weight: 600; letter-spacing: 0.04em;
-      background: linear-gradient(to right, #e5e7eb, #a5b4fc);
+      background: var(--text-main);
       -webkit-background-clip: text;
       background-clip: text;
       color: transparent;
@@ -179,7 +165,7 @@
         height: 2px;
         border-radius: 999px;
         width: 0%;
-        background: linear-gradient(to right, #6366f1, #22d3ee);
+        background: linear-gradient(to right, #6366f1);
         transition: width var(--transition-fast);
       }
       .nav-links a:hover {
@@ -206,7 +192,7 @@
         height: 36px;
         border-radius: 999px;
         border: 1px solid var(--border-soft);
-        background: var(--card-bg);
+        background: #222;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -550,8 +536,8 @@
         border-color: var(--border-soft);
       }
       .dropzone:hover {
-        border-color: rgba(129, 140, 248, 0.95);
-        box-shadow: 0 16px 40px rgba(37, 99, 235, 0.14);
+        border-color: var(--primary);
+        box-shadow: 0 16px 40px var(--bg-secondary);
       }
 
       .dropzone-icon {
@@ -592,13 +578,12 @@
         width: 100%;
         border-radius: var(--radius-full);
         padding: 0.62rem 1rem;
-        background: linear-gradient(135deg, #6366f1, #22d3ee);
+        background: linear-gradient(135deg, #6366f1);
         border: none;
         color: white;
         cursor: pointer;
         font-weight: 650;
         font-size: 0.92rem;
-        box-shadow: 0 12px 30px rgba(56, 189, 248, 0.35);
         transition: transform var(--transition-fast), filter var(--transition-fast);
       }
       .btn-primary:hover {

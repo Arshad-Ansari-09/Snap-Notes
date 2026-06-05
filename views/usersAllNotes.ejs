@@ -20,18 +20,20 @@
 
     <style>
       :root {
-        --bg: #050816;
-        --bg-alt: #020617;
-        --primary: #6366f1;
-        --primary-soft: rgba(99, 102, 241, 0.16);
-        --accent: #f97316;
-        --text-main: #e5e7eb;
-        --text-muted: #9ca3af;
-        --card-bg: rgba(15, 23, 42, 0.92);
-        --border-soft: rgba(148, 163, 184, 0.35);
-        --radius-lg: 18px;
+        --bg: #0d1117;
+        --bg-secondary: #161b22;
+        --surface: #161b22;
+        --surface-hover: #1c2128;
+        --border: #30363d;
+        --border-hover: #3d444d;
+        --primary: #4f46e5;
+        --text-main: #f0f6fc;
+        --text-muted: #8b949e;
+        --success: #238636;
+        --danger: #da3633;
+        --radius-lg: 14px;
         --radius-full: 999px;
-        --shadow-soft: 0 18px 40px rgba(15, 23, 42, 0.55);
+        --shadow-soft: 0 6px 18px rgba(0,0,0,.25);
         --transition-fast: 150ms ease;
         --transition: 220ms ease;
       }
@@ -62,27 +64,7 @@
       body {
         min-height: 100vh;
         color: var(--text-main);
-        background: radial-gradient(
-            circle at 0% 0%,
-            rgba(56, 189, 248, 0.16),
-            transparent 55%
-          ),
-          radial-gradient(
-            circle at 100% 100%,
-            rgba(244, 114, 182, 0.16),
-            transparent 55%
-          ),
-          radial-gradient(
-            circle at 0% 100%,
-            rgba(129, 140, 248, 0.18),
-            transparent 55%
-          ),
-          radial-gradient(
-            circle at 100% 0%,
-            rgba(45, 212, 191, 0.12),
-            transparent 55%
-          ),
-          linear-gradient(135deg, #020617, #020617);
+        background: var(--bg);
         transition: background var(--transition), color var(--transition);
       }
       [data-theme="light"] body {
@@ -116,14 +98,10 @@
         position: sticky;
         top: 0;
         z-index: 50;
-        backdrop-filter: blur(18px);
-        background: linear-gradient(
-          to bottom,
-          rgba(15, 23, 42, 0.95),
-          rgba(15, 23, 42, 0.88),
-          transparent
-        );
-        border-bottom: 1px solid rgba(148, 163, 184, 0.32);
+        backdrop-filter: blur(10px);
+        /* Dark Default */
+        background: rgba(13,17,23,.92);
+        border-bottom: 1px solid var(--border);
         margin-bottom: 1.2rem;
       }
       [data-theme="light"] .navbar {
@@ -140,42 +118,29 @@
         gap: 2rem;
       }
 
-      .brand {
-        display: flex;
-        align-items: center;
-        gap: 0.6rem;
-        white-space: nowrap;
-      }
-      .brand-logo {
-        width: 32px;
-        height: 32px;
-        border-radius: 12px;
-        background: conic-gradient(
-          from 190deg,
-          #4f46e5,
-          #22c55e,
-          #06b6d4,
-          #f97316,
-          #6366f1
-        );
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: white;
-        font-weight: 700;
-        font-size: 1.1rem;
-        box-shadow: 0 0 0 1px rgba(15, 23, 42, 0.9),
-          0 12px 25px rgba(56, 189, 248, 0.45);
-      }
+      .brand { 
+      display: flex; 
+      align-items: center; 
+      gap: 0.6rem; 
+      white-space: nowrap; 
+    }
+    .brand-logo{
+      width: 34px;
+      height: 34px;
+      background: var(--primary);
+      border-radius: 10px;
+      color: white;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-weight:700;
+    }
 
       .brand-title {
-        font-size: 1.2rem;
-        font-weight: 600;
-        letter-spacing: 0.04em;
-        background: linear-gradient(to right, #e5e7eb, #a5b4fc);
+        font-size: 1.2rem; font-weight: 600; letter-spacing: 0.04em;
+        color: var(--text-main);
         -webkit-background-clip: text;
         background-clip: text;
-        color: transparent;
       }
       [data-theme="light"] .brand-title {
         background: linear-gradient(to right, #1e293b, #4338ca);
@@ -189,28 +154,22 @@
         text-transform: uppercase;
       }
 
-      .nav-links {
-        display: flex;
-        align-items: center;
-        gap: 1.4rem;
-        font-size: 0.88rem;
-        flex: 1;
-      }
-      .nav-links a {
-        position: relative;
-        color: var(--text-muted);
-        text-decoration: none;
-        padding: 0.2rem 0;
-      }
-      .nav-links a.active {
-        color: var(--text-main);
-      }
+      .nav-links { display: flex; align-items: center; gap: 1.4rem; font-size: 0.88rem; flex: 1; }
+    .nav-links a {
+      position: relative; color: var(--text-muted); text-decoration: none; padding: 0.2rem 0;
+      transition: color var(--transition-fast);
+    }
+    .nav-links a::after {
+      content: ""; position: absolute; left: 0; bottom: -0.3rem; height: 2px; border-radius: 999px;
+      width: 0%; background: linear-gradient(#6366f1);
+      transition: width var(--transition-fast);
+    }
+    .nav-links a:hover { color: var(--text-main); }
+    .nav-links a:hover::after { width: 100%; }
+    .nav-links a.active { color: var(--text-main); }
+    .nav-links a.active::after { width: 60%; }
 
-      .nav-right {
-        display: flex;
-        align-items: center;
-        gap: 0.9rem;
-      }
+    .nav-right { display: flex; align-items: center; gap: 0.9rem; }
 
       .theme-toggle {
         width: 36px;
@@ -519,12 +478,10 @@
       }
 
       .note-card {
-        background: radial-gradient(circle at 0 -10%, rgba(56, 189, 248, 0.3), transparent 58%),
-          radial-gradient(circle at 100% 110%, rgba(244, 114, 182, 0.26), transparent 58%),
-          var(--card-bg);
+        background: var(--surface);
         border-radius: var(--radius-lg);
-        border: 1px solid rgba(148, 163, 184, 0.42);
-        box-shadow: var(--shadow-soft);
+        border: 1px solid var(--border);
+        box-shadow: none;
         overflow: hidden;
         display: flex;
         flex-direction: column;
@@ -538,10 +495,12 @@
         border-color: var(--border-soft);
       }
       .note-card:hover {
-        transform: translateY(-8px);
-        box-shadow: 0 22px 52px rgba(15, 23, 42, 0.85);
-        border-color: rgba(129, 140, 248, 0.95);
+        box-shadow: 0 12px 12px rgba(0, 0, 0, 0.95);
+        background: var(--surface-hover);
+        border-color: var(--border-hover);
+        transform: translateY(-3px);
       }
+      [data-theme="light"] .note-card:hover { background: #ffffff; border-color: var(--primary); box-shadow: 0 20px 40px rgba(0,0,0,0.1); }
 
       .note-thumb {
         position: relative;
@@ -591,6 +550,9 @@
       }
 
       .download-btn {
+        background: rgba(22,27,34,.95);
+        border: 1px solid var(--border);
+        box-shadow: none;
         position: absolute;
         right: 0.75rem;
         top: 0.65rem;
@@ -600,13 +562,10 @@
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        border: 1px solid rgba(148, 163, 184, 0.7);
-        background: rgba(15, 23, 42, 0.9);
         color: #e5e7eb;
         cursor: pointer;
         outline: none;
         transition: transform var(--transition-fast), box-shadow var(--transition-fast), border-color var(--transition-fast);
-        box-shadow: 0 10px 24px rgba(15, 23, 42, 0.8);
         backdrop-filter: blur(12px);
         z-index: 3;
 
@@ -615,14 +574,29 @@
       }
       .download-btn:hover {
         transform: translateY(-1px) scale(1.03);
-        border-color: rgba(129, 140, 248, 0.95);
+        border-color: rgba(129,140,248,0.95);
+        background: var(--bg);
+        color: white;
+      }
+
+      [data-theme="light"] .download-btn {
+        background: #ffffff;
+        border: 1px solid var(--border-soft);
+        color: var(--text-main);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      }
+      [data-theme="light"] .download-btn:hover {
+        background: var(--primary);
+        border-color: var(--primary);
+        color: #ffffff;
+        box-shadow: 0 4px 16px rgba(79, 70, 229, 0.3);
       }
 
       .download-menu {
         position: absolute;
         top: 3.05rem;
         right: 0.75rem;
-        background: rgba(15, 23, 42, 0.92);
+        background: var(--bg);
         border: 1px solid rgba(148, 163, 184, 0.55);
         border-radius: 14px;
         box-shadow: 0 18px 40px rgba(15, 23, 42, 0.55);
@@ -647,9 +621,10 @@
         text-align: left;
       }
       .download-menu button:hover {
-        background: rgba(99, 102, 241, 0.16);
+        background: var(--border);
       }
-
+      [data-theme="light"] .download-menu button:hover { background: rgba(79, 70, 229, 0.12); }
+      
       .note-body {
         padding: 0.9rem 0.95rem 0.95rem;
         display: flex;
@@ -676,9 +651,9 @@
         font-size: 0.68rem;
         border-radius: 999px;
         padding: 0.1rem 0.55rem;
-        border: 1px solid rgba(148, 163, 184, 0.5);
+        background: transparent;
+        border: 1px solid var(--border);
         color: var(--text-muted);
-        background: rgba(15, 23, 42, 0.9);
       }
       [data-theme="light"] .tag {
         background: #f1f5f9;
@@ -930,7 +905,6 @@
                 <%= note.classname %>
               </span>
 
-              <!-- ✅ FAST button UI elements (like home page) -->
               <button
                 class="download-btn download-pdf-btn"
                 title="Download Options"
